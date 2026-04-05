@@ -1,0 +1,70 @@
+---
+import { buildCanonicalUrl, buildOgImage, buildPageTitle } from '@/lib/seo';
+import { SITE } from '@/lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  pathname: string;
+  pageType?: 'website' | 'article';
+  publishedAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  tags?: string[];
+}
+
+const {
+  title,
+  description,
+  pathname,
+  pageType = 'website',
+  publishedAt,
+  updatedAt,
+  tags = []
+} = Astro.props;
+
+const canonicalUrl = buildCanonicalUrl({ pathname, site: Astro.site, title, description });
+const ogImage = buildOgImage({ site: Astro.site });
+
+const schema =
+  pageType === 'article'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: title,
+        description,
+        author: {
+          '@type': 'Person',
+          name: SITE.author
+        },
+        datePublished: publishedAt?.toISOString(),
+        dateModified: updatedAt?.toISOString() ?? publishedAt?.toISOString(),
+        keywords: tags,
+        url: canonicalUrl
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: SITE.title,
+        description: SITE.description,
+        url: Astro.site?.toString()
+      };
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{buildPageTitle(title)}</title>
+<meta name="description" content={description} />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content={SITE.accent} />
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+<meta property="og:type" content={pageType} />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:title" content={buildPageTitle(title)} />
+<meta property="og:description" content={description} />
+{canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={buildPageTitle(title)} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />

@@ -1,0 +1,71 @@
+---
+import SEOHead from '@/components/SEOHead.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import { withBase } from '@/lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  pathname?: string | undefined;
+  pageType?: 'website' | 'article';
+  publishedAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  tags?: string[];
+}
+
+const {
+  title,
+  description,
+  pathname = Astro.url.pathname,
+  pageType = 'website',
+  publishedAt,
+  updatedAt,
+  tags = []
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEOHead
+      title={title}
+      description={description}
+      pathname={pathname}
+      pageType={pageType}
+      publishedAt={publishedAt}
+      updatedAt={updatedAt}
+      tags={tags}
+    />
+    <link rel="icon" href={withBase('/favicon.svg')} />
+  </head>
+  <body>
+    <SiteHeader />
+    <main>
+      <slot />
+    </main>
+    <SiteFooter />
+
+    <script is:inline>
+      const labels = new WeakMap();
+      document.querySelectorAll('pre').forEach((block) => {
+        if (block.dataset.enhanced === 'true') return;
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.type = 'button';
+        button.textContent = 'Copy';
+        labels.set(button, 'Copy');
+        button.addEventListener('click', async () => {
+          const content = block.querySelector('code')?.innerText ?? block.innerText;
+          await navigator.clipboard.writeText(content);
+          button.textContent = 'Copied';
+          window.setTimeout(() => {
+            button.textContent = labels.get(button) ?? 'Copy';
+          }, 1200);
+        });
+        block.append(button);
+        block.dataset.enhanced = 'true';
+      });
+    </script>
+  </body>
+</html>

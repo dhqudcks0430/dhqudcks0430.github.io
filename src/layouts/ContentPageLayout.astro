@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow?: string | undefined;
+  pathname?: string | undefined;
+}
+
+const { title, description, eyebrow, pathname } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} pathname={pathname}>
+  <PageHero eyebrow={eyebrow} title={title} description={description}>
+    <slot name="hero" />
+  </PageHero>
+
+  <section class="site-shell section-spacing">
+    <div class="surface panel-card prose">
+      <slot />
+    </div>
+  </section>
+</BaseLayout>
