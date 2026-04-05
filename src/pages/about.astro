@@ -1,0 +1,29 @@
+---
+import ContentPageLayout from '@/layouts/ContentPageLayout.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import StatCard from '@/components/StatCard.astro';
+import { getPageByKind, getPublishedWriteups } from '@/lib/content';
+import { render } from 'astro:content';
+
+const page = await getPageByKind('about');
+
+if (!page) {
+  throw new Error('About page content entry is missing.');
+}
+
+const writeups = await getPublishedWriteups();
+const { Content } = await render(page);
+---
+
+<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="Working Style" pathname={page.data.canonicalPath}>
+  <Content />
+
+  <section class="section-spacing">
+    <SectionHeader title="Current profile snapshot" description="A few static highlights that make the portfolio feel alive even before you replace the sample content with your own work." />
+    <div class="stats-grid">
+      <StatCard label="Writeups" value={writeups.length} description="Sample entries already wired into archive, tag, and category generation." />
+      <StatCard label="Design" value="Dark-first" description="Premium minimal styling tuned for long-form technical reading." />
+      <StatCard label="Deployment" value="GitHub Pages" description="Static output and workflow configuration ready for Pages hosting." />
+    </div>
+  </section>
+</ContentPageLayout>

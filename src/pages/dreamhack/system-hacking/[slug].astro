@@ -1,0 +1,23 @@
+---
+import WriteupLayout from '@/layouts/WriteupLayout.astro';
+import { getPublishedWriteups } from '@/lib/content';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const writeups = await getPublishedWriteups();
+
+  return writeups
+    .filter((entry) => entry.data.learningTrack === 'dreamhack-system-hacking')
+    .map((entry) => ({
+      params: { slug: entry.slug },
+      props: { entry }
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<WriteupLayout entry={entry} headings={headings} pathname={entry.data.canonicalPath}>
+  <Content />
+</WriteupLayout>

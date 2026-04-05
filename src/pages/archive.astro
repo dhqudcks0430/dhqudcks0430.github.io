@@ -1,0 +1,19 @@
+---
+import ArchiveList from '@/components/ArchiveList.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getArchiveGroups, getPublishedWriteups } from '@/lib/content';
+
+const writeups = await getPublishedWriteups();
+const archiveGroups = getArchiveGroups(writeups);
+---
+
+<BaseLayout title="Archive" description="Chronological archive of all published writeups and challenge notes." pathname="/archive">
+  <PageHero eyebrow="Archive" title="All writeups" description="Every published note, grouped by year and generated directly from the MDX content collection." />
+
+  <section class="site-shell section-spacing">
+    <SectionHeader title="Chronological view" description="Useful when you want to see learning progression over time instead of filtering by track or taxonomy." />
+    <ArchiveList groups={archiveGroups} />
+  </section>
+</BaseLayout>

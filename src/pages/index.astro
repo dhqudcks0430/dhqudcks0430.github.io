@@ -1,0 +1,115 @@
+---
+import ContentPageLayout from '@/layouts/ContentPageLayout.astro';
+import LeadWriteupCard from '@/components/LeadWriteupCard.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import StatCard from '@/components/StatCard.astro';
+import TaxonomyCard from '@/components/TaxonomyCard.astro';
+import TrackSummary from '@/components/TrackSummary.astro';
+import WriteupCard from '@/components/WriteupCard.astro';
+import { getCategoryLabel, getCategoryMap, getFeaturedWriteups, getPageByKind, getPublishedWriteups, getTagMap, getTrackWriteups } from '@/lib/content';
+import { SITE, withBase } from '@/lib/site';
+import { render } from 'astro:content';
+
+const page = await getPageByKind('home');
+
+if (!page) {
+  throw new Error('Home page content entry is missing.');
+}
+
+const writeups = await getPublishedWriteups();
+const featuredWriteups = getFeaturedWriteups(writeups, 4);
+const [leadWriteup, ...secondaryFeaturedWriteups] = featuredWriteups;
+const allTags = getTagMap(writeups);
+const tagMap = allTags.slice(0, 6);
+const categoryMap = getCategoryMap(writeups);
+const featuredCategories = categoryMap.slice(0, 3);
+const dreamhackWriteups = getTrackWriteups(writeups, 'dreamhack-system-hacking');
+const pwnableWriteups = getTrackWriteups(writeups, 'pwnable-kr');
+const { Content } = await render(page);
+---
+
+<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="Developer Portfolio + Writeups" pathname={page.data.canonicalPath}>
+  <Fragment slot="hero">
+    <div class="hero-signal-grid">
+      <div class="hero-actions">
+        <a class="button-link" href={withBase('/archive')}>Browse archive</a>
+        <a class="button-link" data-variant="ghost" href={withBase('/dreamhack/system-hacking')}>DreamHack track</a>
+        <a class="button-link" data-variant="ghost" href={withBase('/pwnable-kr')}>pwnable.kr track</a>
+      </div>
+
+      <div class="hero-signal-card surface">
+        <span class="hero-signal-card__label">Current focus</span>
+        <strong>System hacking, binary exploitation, repeatable writeups</strong>
+        <p>Designed like an editorial front page: strong type, compact metadata, and fast access into challenge tracks.</p>
+      </div>
+
+      <div class="hero-signal-card surface">
+        <span class="hero-signal-card__label">Featured categories</span>
+        <div class="hero-signal-card__list">
+          {featuredCategories.map(({ term, writeups: groupedWriteups }) => (
+            <a href={withBase(`/categories/${term}`)}>
+              <span>{getCategoryLabel(term)}</span>
+              <strong>{groupedWriteups.length}</strong>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </Fragment>
+
+  <Content />
+
+  <section class="section-spacing">
+    <div class="stats-grid">
+      <StatCard label="Published" value={writeups.length} description="Static MDX writeups generated from content collections." />
+      <StatCard label="Tracks" value={SITE.tracks.length} description="Dedicated landing pages for DreamHack and pwnable.kr progress." />
+      <StatCard label="Tags" value={allTags.length} description="Normalized taxonomy terms for filtering techniques and themes." />
+    </div>
+  </section>
+
+  <section class="section-spacing">
+    <SectionHeader title="Featured writeups" description="Highlighted notes that show the tone, structure, and technical depth of the archive." href="/archive" linkLabel="View full archive" />
+    {leadWriteup && (
+      <div class="featured-grid">
+        <LeadWriteupCard entry={leadWriteup} />
+        <div class="featured-grid__rail">
+          {secondaryFeaturedWriteups.map((entry) => (
+            <WriteupCard entry={entry} />
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+
+  <section class="section-spacing">
+    <SectionHeader title="Learning tracks" description="Separate landing pages keep each platform readable while still sharing one content-driven design system." />
+    <div class="track-grid">
+      <TrackSummary
+        href="/dreamhack/system-hacking"
+        title="DreamHack System Hacking"
+        description="Exploit development drills, classic memory corruption practice, and mitigation-aware workflows."
+        total={dreamhackWriteups.length}
+        featured={dreamhackWriteups.filter((entry) => entry.data.featured).length}
+      />
+      <TrackSummary
+        href="/pwnable-kr"
+        title="pwnable.kr"
+        description="A running archive of classic pwnable.kr challenge notes, process-control exercises, and reversing practice."
+        total={pwnableWriteups.length}
+        featured={pwnableWriteups.filter((entry) => entry.data.featured).length}
+      />
+    </div>
+  </section>
+
+  <section class="section-spacing">
+      <SectionHeader title="Taxonomy jump points" description="Tags and categories are generated from writeup metadata so archive navigation stays consistent as the collection grows." />
+      <div class="taxonomy-grid">
+        {tagMap.map(({ term, writeups: taggedWriteups }) => (
+        <TaxonomyCard title={`#${term}`} description={`Browse ${taggedWriteups.length} notes connected by the ${term} technique or theme.`} href={`/tags/${term}`} count={taggedWriteups.length} />
+        ))}
+        {categoryMap.slice(0, 2).map(({ term, writeups: groupedWriteups }) => (
+        <TaxonomyCard title={term} description={`${getCategoryLabel(term)} notes grouped into one cleaner archive lane.`} href={`/categories/${term}`} count={groupedWriteups.length} />
+        ))}
+      </div>
+  </section>
+</ContentPageLayout>

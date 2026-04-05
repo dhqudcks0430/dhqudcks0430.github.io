@@ -1,0 +1,33 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import WriteupCard from '@/components/WriteupCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCategoryLabel, getCategoryMap, getPublishedWriteups } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const writeups = await getPublishedWriteups();
+  const categories = getCategoryMap(writeups);
+
+  return categories.map(({ term, writeups: groupedWriteups }) => ({
+    params: { category: term },
+    props: {
+      category: term,
+      writeups: groupedWriteups
+    }
+  }));
+}
+
+const { category, writeups } = Astro.props;
+---
+
+<BaseLayout title={`Category: ${getCategoryLabel(category)}`} description={`Writeups in the ${getCategoryLabel(category)} category.`} pathname={`/categories/${category}`}>
+  <PageHero eyebrow="Category" title={getCategoryLabel(category)} description={`Topic-driven archive page for ${getCategoryLabel(category)} writeups.`} />
+
+  <section class="site-shell section-spacing">
+    <div class="card-grid">
+      {writeups.map((entry) => (
+        <WriteupCard entry={entry} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

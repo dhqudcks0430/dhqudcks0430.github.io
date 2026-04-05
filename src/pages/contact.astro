@@ -1,0 +1,55 @@
+---
+import ContentPageLayout from '@/layouts/ContentPageLayout.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import { getPageByKind } from '@/lib/content';
+import { SITE } from '@/lib/site';
+import { render } from 'astro:content';
+
+const page = await getPageByKind('contact');
+
+if (!page) {
+  throw new Error('Contact page content entry is missing.');
+}
+
+const { Content } = await render(page);
+const profileLinks = [] as Array<{ label: string; href: string }>;
+
+if (SITE.github) {
+  profileLinks.push({ label: 'GitHub', href: SITE.github });
+}
+
+if (SITE.linkedin) {
+  profileLinks.push({ label: 'LinkedIn', href: SITE.linkedin });
+}
+---
+
+<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="Static Contact" pathname={page.data.canonicalPath}>
+  <Content />
+
+  <section class="section-spacing">
+    <SectionHeader title="Reach out" description="These links are intentionally simple and GitHub Pages-safe: no backend, no form processing, and no hidden service dependency." />
+    <div class="card-grid">
+      <article class="surface panel-card">
+        <span class="eyebrow">Email</span>
+        <h2 style="font-size:1.5rem; margin:0.8rem 0 0.4rem;">Direct conversation</h2>
+        <p class="meta-copy">Use email for collaboration, engineering roles, or technical follow-up.</p>
+        <div class="section-spacing">
+          <a class="button-link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </div>
+      </article>
+
+      {profileLinks.length > 0 && (
+        <article class="surface panel-card">
+          <span class="eyebrow">Profiles</span>
+          <h2 style="font-size:1.5rem; margin:0.8rem 0 0.4rem;">Public links</h2>
+          <p class="meta-copy">Keep your portfolio and public profiles aligned so readers can move from notes to code quickly.</p>
+          <div class="cluster section-spacing">
+            {profileLinks.map((item) => (
+              <a class="button-link" data-variant="ghost" href={item.href} rel="noreferrer" target="_blank">{item.label}</a>
+            ))}
+          </div>
+        </article>
+      )}
+    </div>
+  </section>
+</ContentPageLayout>

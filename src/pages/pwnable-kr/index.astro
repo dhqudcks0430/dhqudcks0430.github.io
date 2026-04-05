@@ -1,0 +1,31 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import StatCard from '@/components/StatCard.astro';
+import WriteupCard from '@/components/WriteupCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPublishedWriteups, getTrackWriteups } from '@/lib/content';
+
+const writeups = getTrackWriteups(await getPublishedWriteups(), 'pwnable-kr');
+---
+
+<BaseLayout title="pwnable.kr" description="Landing page for pwnable.kr challenge writeups and notes." pathname="/pwnable-kr">
+  <PageHero eyebrow="Learning Track" title="pwnable.kr" description="A static archive of classic pwnable.kr writeups covering process control, memory corruption, environment tricks, and reversing." />
+
+  <section class="site-shell section-spacing">
+    <div class="stats-grid">
+      <StatCard label="Writeups" value={writeups.length} description="Published pwnable.kr entries in this track." />
+      <StatCard label="Featured" value={writeups.filter((entry) => entry.data.featured).length} description="Entries surfaced as key examples on the landing page." />
+      <StatCard label="Focus" value="Fundamentals" description="Process interfaces, classic pwns, environment abuse, and architecture reading." />
+    </div>
+  </section>
+
+  <section class="site-shell section-spacing">
+    <SectionHeader title="Track entries" description="Each challenge page is generated from MDX frontmatter and shares the same premium technical reading layout." />
+    <div class="card-grid">
+      {writeups.map((entry) => (
+        <WriteupCard entry={entry} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

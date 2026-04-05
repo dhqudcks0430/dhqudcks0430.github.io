@@ -1,0 +1,21 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import TaxonomyCard from '@/components/TaxonomyCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCategoryLabel, getCategoryMap, getPublishedWriteups } from '@/lib/content';
+
+const writeups = await getPublishedWriteups();
+const categories = getCategoryMap(writeups);
+---
+
+<BaseLayout title="Categories" description="Browse categories derived from writeup metadata topics." pathname="/categories">
+  <PageHero eyebrow="Taxonomy" title="Categories" description="Categories are derived from the writeup topic metadata so topic pages stay synchronized with the collection." />
+
+  <section class="site-shell section-spacing">
+    <div class="taxonomy-grid">
+      {categories.map(({ term, writeups: groupedWriteups }) => (
+        <TaxonomyCard title={getCategoryLabel(term)} description={groupedWriteups[0]?.data.summary ?? 'Category archive'} href={`/categories/${term}`} count={groupedWriteups.length} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

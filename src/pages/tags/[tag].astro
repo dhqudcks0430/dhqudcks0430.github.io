@@ -1,0 +1,33 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import WriteupCard from '@/components/WriteupCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPublishedWriteups, getTagMap } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const writeups = await getPublishedWriteups();
+  const tags = getTagMap(writeups);
+
+  return tags.map(({ term, writeups: taggedWriteups }) => ({
+    params: { tag: term },
+    props: {
+      tag: term,
+      writeups: taggedWriteups
+    }
+  }));
+}
+
+const { tag, writeups } = Astro.props;
+---
+
+<BaseLayout title={`Tag: ${tag}`} description={`Writeups tagged with ${tag}.`} pathname={`/tags/${tag}`}>
+  <PageHero eyebrow="Tag" title={`#${tag}`} description={`Generated listing for the ${tag} tag across all published writeups.`} />
+
+  <section class="site-shell section-spacing">
+    <div class="card-grid">
+      {writeups.map((entry) => (
+        <WriteupCard entry={entry} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
