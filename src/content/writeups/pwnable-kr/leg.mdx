@@ -1,0 +1,105 @@
+---
+title: leg — Reading the Assembly Until the Magic Value Looks Obvious
+slug: leg
+description: A pwnable.kr reversing-style note focused on ARM disassembly reading, control-flow tracing, and reconstructing the expected value without guessing.
+publishedAt: 2026-01-22
+updatedAt: 2026-01-23
+draft: false
+featured: false
+platform: pwnable-kr
+learningTrack: pwnable-kr
+topic: reversing
+difficulty: medium
+status: reviewed
+challengeName: leg
+targetType: ARM challenge binary
+operatingSystem: Linux
+tags:
+  - arm
+  - reversing
+  - control-flow
+  - disassembly
+techniques:
+  - function-tracing
+  - constant-reconstruction
+tools:
+  - gdb-multiarch
+  - objdump
+  - ghidra
+summary: Trace the helper functions, reconstruct the arithmetic or return values, and derive the final constant instead of treating the binary like a black box.
+seoTitle: pwnable.kr leg Writeup
+seoDescription: pwnable.kr leg writeup covering ARM reversing, helper tracing, and magic value reconstruction.
+canonicalPath: /pwnable-kr/leg
+---
+
+## Overview
+
+`leg` feels much more concrete once you stop treating it like a mystery number challenge. The binary ships with ARM assembly, the check is literally `key1() + key2() + key3() == key`, and the interesting part is that the returned values depend on ARM `pc` / `lr` behavior. This is one of those cases where the assembly matters more than the C wrapper.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Architecture | ARM |
+| Skill Focus | Track `pc` / `lr`-dependent return values |
+| Goal | Recover the final sum expected by `leg` |
+
+## Environment & Tools
+
+The most useful artifacts are the provided `leg.asm` and a debugger that understands ARM state.
+
+```bash
+objdump -d ./leg | less
+gdb-multiarch -q ./leg
+```
+
+## Recon
+
+The high-confidence structure is:
+
+```c
+if(key1() + key2() + key3() == key)
+```
+
+So there is no exploit primitive here. The real work is recovering the three return values correctly from the ARM assembly.
+
+## Vulnerability Analysis
+
+The detail that trips people up is `key2()`: the function crosses ARM/Thumb-style control-flow boundaries, so simply reading the C-like structure is less reliable than tracing the actual register behavior. This is why public writeups mention `pc` being ahead of the current instruction and `lr` capture points.
+
+## Exploitation Steps
+
+Tracing the helpers yields the common values:
+
+```text
+key1() -> 0x8ce4
+key2() -> 0x8d0c
+key3() -> 0x8d80
+sum    -> 108400
+```
+
+So the final input is simply:
+
+```text
+108400
+```
+
+## Payload/Technique Breakdown
+
+This challenge is a good example of why reversing notes should name the actual constants you observed rather than only summarizing “I traced the functions.” Once the three values are written down, the final solve is boring arithmetic.
+
+## Result
+
+Entering `108400` satisfies the check and confirms that the helper tracing was correct.
+
+## Lessons Learned
+
+- `pc` / `lr` behavior is not optional trivia in ARM challenges like this.
+- Assembly handout files are often the real source of truth.
+- Reversing writeups feel much more convincing once they include the exact recovered constants.
+
+## References
+
+- ARM calling convention notes
+- Ghidra decompilation basics
+- `objdump` and multiarch GDB usage

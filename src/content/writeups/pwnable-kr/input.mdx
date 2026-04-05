@@ -1,0 +1,96 @@
+---
+title: input — Solving the Whole Process, Not One Parameter
+slug: input
+description: A pwnable.kr writeup about orchestrating arguments, stdin, stderr, files, and environment values together until the binary's full process contract is satisfied.
+publishedAt: 2025-06-11
+updatedAt: 2025-06-14
+draft: true
+featured: true
+featuredWeight: 6
+platform: pwnable-kr
+learningTrack: pwnable-kr
+topic: tooling
+difficulty: hard
+status: in-progress
+challengeName: input
+targetType: Multi-channel Linux process orchestration challenge
+operatingSystem: Linux
+tags:
+  - process-orchestration
+  - argv
+  - env-variables
+  - sockets
+techniques:
+  - multi-channel-input-control
+  - staged-process-launch
+tools:
+  - python
+  - ssh
+  - nc
+summary: Solve the binary as a whole process environment problem by coordinating argv, stdio streams, files, and network-facing setup in one repeatable launcher.
+seoTitle: pwnable.kr input Writeup
+seoDescription: pwnable.kr input writeup covering argv control, stdio choreography, environment setup, and repeatable launch scripting.
+canonicalPath: /pwnable-kr/input
+---
+
+## Overview
+
+`input` is one of the best challenges for building systems thinking. The binary is not asking for one clever trick; it is asking whether you can control **every relevant process channel at once** and keep the whole launch sequence repeatable.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Interfaces | `argv`, stdin, stderr, environment, file path, socket |
+| Skill Focus | Process orchestration |
+| Goal | Satisfy all checks in the right launch order |
+
+## Environment & Tools
+
+I used a Python launcher because trying to coordinate all requirements in raw shell syntax quickly becomes harder to debug than the challenge itself.
+
+```python
+import os
+from pwn import process
+
+argv = ['target'] + ['A'] * 99
+env = {'\xde\xad\xbe\xef': '\xca\xfe\xba\xbe'}
+```
+
+## Recon
+
+The binary validates multiple channels one after another. That means partial progress is still valuable: each satisfied condition narrows the remaining setup problem.
+
+## Vulnerability Analysis
+
+There is no single bug to weaponize. The challenge tests whether the operator can control the runtime contract of a process in a Linux environment. That makes automation mandatory.
+
+## Exploitation Steps
+
+I broke the solution into launch phases:
+
+1. construct the exact `argv` array,
+2. prepare redirected stdin and stderr payloads,
+3. create the expected file name and contents,
+4. seed the required environment entry,
+5. trigger the network-facing requirement.
+
+## Payload/Technique Breakdown
+
+The important technique is not a byte trick. It is **state choreography**. Each channel must be configured without accidentally breaking another, so a single Python script becomes the source of truth for the entire solve.
+
+## Result
+
+The solve script reached all intermediate checks consistently, and the remaining work was reduced to tightening the network setup sequence.
+
+## Lessons Learned
+
+- Some pwn challenges are really process-engineering challenges.
+- Repeatable launch scripts are worth writing early.
+- Debugging multi-channel input is much easier when each requirement is isolated in code.
+
+## References
+
+- Linux process model notes
+- pwntools process launching patterns
+- File descriptor and environment setup references
