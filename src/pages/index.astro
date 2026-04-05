@@ -111,10 +111,20 @@ const { Content } = await render(page);
       <SectionHeader title="분류 바로가기" description="태그와 카테고리는 글 메타데이터에서 생성되므로, 글이 늘어나도 아카이브 탐색이 일관됩니다." />
       <div class="taxonomy-grid">
         {tagMap.map(({ term, writeups: taggedWriteups }) => (
-        <TaxonomyCard title={`#${term}`} description={`${term} 기법/주제와 연결된 노트 ${taggedWriteups.length}개를 탐색합니다.`} href={`/tags/${term}`} count={taggedWriteups.length} />
+        <TaxonomyCard
+          title={`#${term}`}
+          description={`${term} 기법/주제와 연결된 노트를 모아 봅니다.`}
+          href={`/tags/${term}`}
+          publishedAt={taggedWriteups[0]?.data.publishedAt}
+        />
         ))}
         {categoryMap.slice(0, 2).map(({ term, writeups: groupedWriteups }) => (
-        <TaxonomyCard title={term} description={`${getCategoryLabel(term)} 관련 노트를 한 번에 모아 보는 아카이브 묶음입니다.`} href={`/categories/${term}`} count={groupedWriteups.length} />
+        <TaxonomyCard
+          title={getCategoryLabel(term)}
+          description={`${getCategoryLabel(term)} 관련 노트를 한 번에 모아 보는 아카이브 묶음입니다.`}
+          href={`/categories/${term}`}
+          publishedAt={groupedWriteups[0]?.data.publishedAt}
+        />
         ))}
       </div>
   </section>

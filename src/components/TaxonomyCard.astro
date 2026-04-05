@@ -1,27 +1,20 @@
 ---
+import { formatDate } from '@/lib/content';
 import { withBase } from '@/lib/site';
 
 interface Props {
   title: string;
   description: string;
   href: string;
-  count: number;
+  publishedAt?: Date | undefined;
 }
 
-const { title, description, href, count } = Astro.props;
+const { title, description, href, publishedAt } = Astro.props;
 const resolvedHref = withBase(href);
 ---
 
-<article class="surface taxonomy-card">
-    <span class="taxonomy-card__eyebrow">탐색 노드</span>
-  <div class="taxonomy-meta">
-    <h3>{title}</h3>
-    <span class="pill" data-variant="accent">{count}개 글</span>
-  </div>
+<a class="surface taxonomy-card" href={resolvedHref}>
+  {publishedAt && <span class="taxonomy-card__date">{formatDate(publishedAt)}</span>}
+  <h3>{title}</h3>
   <p>{description}</p>
-  <div class="section-spacing">
-      <a class="button-link" data-variant="ghost" href={resolvedHref}>
-      분류 열기 ↗
-      </a>
-  </div>
-</article>
+</a>

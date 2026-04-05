@@ -12,10 +12,15 @@ const categories = getCategoryMap(writeups);
   <PageHero eyebrow="분류" title="카테고리" description="카테고리는 글의 주제 메타데이터에서 생성되어, 주제 페이지가 컬렉션과 항상 동기화됩니다." />
 
   <section class="site-shell section-spacing">
-    <div class="taxonomy-grid">
-      {categories.map(({ term, writeups: groupedWriteups }) => (
-        <TaxonomyCard title={getCategoryLabel(term)} description={groupedWriteups[0]?.data.summary ?? '카테고리 아카이브'} href={`/categories/${term}`} count={groupedWriteups.length} />
-      ))}
-    </div>
-  </section>
+      <div class="taxonomy-grid">
+        {categories.map(({ term, writeups: groupedWriteups }) => (
+        <TaxonomyCard
+          title={getCategoryLabel(term)}
+          description={groupedWriteups[0]?.data.summary ?? '카테고리 아카이브'}
+          href={`/categories/${term}`}
+          publishedAt={groupedWriteups[0]?.data.publishedAt}
+        />
+        ))}
+      </div>
+    </section>
 </BaseLayout>
