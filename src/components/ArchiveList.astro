@@ -1,0 +1,43 @@
+---
+import Pill from '@/components/Pill.astro';
+import { formatDate, getCategoryLabel, getWriteupPath, type WriteupEntry } from '@/lib/content';
+import { withBase } from '@/lib/site';
+
+interface ArchiveGroup {
+  year: number;
+  writeups: WriteupEntry[];
+}
+
+interface Props {
+  groups: ArchiveGroup[];
+}
+
+const { groups } = Astro.props;
+---
+
+<div class="grid" style="gap:1rem;">
+  {groups.map((group) => (
+    <section class="surface archive-card">
+      <h3>{group.year}</h3>
+      <div class="archive-list">
+        {group.writeups.map((entry) => (
+          <article class="archive-item">
+            <div class="taxonomy-meta">
+              <a href={withBase(getWriteupPath(entry))}>
+                <strong>{entry.data.title}</strong>
+              </a>
+              <span class="meta-copy">{formatDate(entry.data.publishedAt)}</span>
+            </div>
+            <p>{entry.data.summary}</p>
+            <div class="cluster">
+              <Pill>{getCategoryLabel(entry.data.topic)}</Pill>
+              {entry.data.tags.slice(0, 3).map((tag) => (
+                <Pill href={`/tags/${tag}`}>#{tag}</Pill>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  ))}
+</div>

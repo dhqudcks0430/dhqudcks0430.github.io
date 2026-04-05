@@ -1,0 +1,55 @@
+---
+import Pill from '@/components/Pill.astro';
+import {
+  formatDate,
+  getCategoryLabel,
+  getDifficultyLabel,
+  getPlatformLabel,
+  getStatusLabel,
+  getWriteupPath,
+  type WriteupEntry
+} from '@/lib/content';
+import { withBase } from '@/lib/site';
+
+interface Props {
+  entry: WriteupEntry;
+}
+
+const { entry } = Astro.props;
+const writeupHref = withBase(getWriteupPath(entry));
+---
+
+<article class="surface lead-writeup-card">
+  <div class="lead-writeup-card__topline">
+    <span class="lead-writeup-card__series">Lead story</span>
+    <span class="lead-writeup-card__date">{formatDate(entry.data.publishedAt)}</span>
+  </div>
+
+  <div class="cluster">
+    <Pill variant="accent">{getPlatformLabel(entry.data.platform)}</Pill>
+    <Pill>{getCategoryLabel(entry.data.topic)}</Pill>
+    <Pill>{getDifficultyLabel(entry.data.difficulty)}</Pill>
+    <Pill>{getStatusLabel(entry.data.status)}</Pill>
+  </div>
+
+  <div class="grid" style="gap:0.9rem;">
+    <h3>
+      <a href={writeupHref}>{entry.data.title}</a>
+    </h3>
+    <p>{entry.data.description}</p>
+  </div>
+
+  <div class="lead-writeup-card__meta">
+    <div class="grid" style="gap:0.75rem;">
+      <span class="lead-writeup-card__summary-label">Why it matters</span>
+      <p class="meta-copy">{entry.data.summary}</p>
+      <div class="cluster">
+        {entry.data.tags.slice(0, 4).map((tag) => (
+          <Pill href={`/tags/${tag}`}>#{tag}</Pill>
+        ))}
+      </div>
+    </div>
+
+    <a class="button-link" href={writeupHref}>Read lead writeup</a>
+  </div>
+</article>

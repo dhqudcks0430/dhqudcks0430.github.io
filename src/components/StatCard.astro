@@ -1,0 +1,18 @@
+---
+interface Props {
+  label: string;
+  value: string | number;
+  description: string;
+}
+
+const { label, value, description } = Astro.props;
+---
+
+<article class="surface panel-card stat-card">
+  <div class="stat-card__label-row">
+    <span class="eyebrow">{label}</span>
+    <span class="stat-card__marker">Snapshot</span>
+  </div>
+  <h3>{value}</h3>
+  <p>{description}</p>
+</article>

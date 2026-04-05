@@ -1,0 +1,27 @@
+---
+import { withBase } from '@/lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  count: number;
+}
+
+const { title, description, href, count } = Astro.props;
+const resolvedHref = withBase(href);
+---
+
+<article class="surface taxonomy-card">
+  <span class="taxonomy-card__eyebrow">Navigation node</span>
+  <div class="taxonomy-meta">
+    <h3>{title}</h3>
+    <span class="pill" data-variant="accent">{count} posts</span>
+  </div>
+  <p>{description}</p>
+  <div class="section-spacing">
+    <a class="button-link" data-variant="ghost" href={resolvedHref}>
+      Open taxonomy ↗
+    </a>
+  </div>
+</article>

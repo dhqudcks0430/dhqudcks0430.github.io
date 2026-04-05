@@ -1,0 +1,36 @@
+---
+import { withBase } from '@/lib/site';
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  total: number;
+  featured: number;
+}
+
+const { href, title, description, total, featured } = Astro.props;
+const resolvedHref = withBase(href);
+---
+
+<article class="surface track-card">
+  <div class="track-card__topline">
+    <span class="eyebrow">Learning Track</span>
+    <span class="track-card__tag">Editorial index</span>
+  </div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <div class="track-card__stats section-spacing">
+    <div>
+      <strong>{total}</strong>
+      <span>Total writeups</span>
+    </div>
+    <div>
+      <strong>{featured}</strong>
+      <span>Featured notes</span>
+    </div>
+  </div>
+  <div class="section-spacing">
+    <a class="button-link" href={resolvedHref}>Explore track</a>
+  </div>
+</article>
