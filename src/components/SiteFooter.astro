@@ -1,0 +1,22 @@
+---
+import { SITE } from '@/lib/site';
+---
+
+<footer class="footer">
+  <div class="site-shell">
+    <div class="surface footer__inner">
+      <div class="grid" style="gap:0.45rem;">
+        <strong>{SITE.title}</strong>
+        <p class="footer-copy">{SITE.tagline}</p>
+      </div>
+
+      <div class="footer-links" aria-label="Social links">
+        {SITE.social.map((item) => (
+          <a href={item.href} rel="noreferrer" target={item.href.startsWith('http') ? '_blank' : undefined}>
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

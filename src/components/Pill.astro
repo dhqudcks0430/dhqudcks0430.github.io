@@ -1,0 +1,16 @@
+---
+import { withBase } from '@/lib/site';
+
+interface Props {
+  href?: string;
+  variant?: 'default' | 'accent' | 'solid';
+}
+
+const { href, variant = 'default' } = Astro.props;
+const Tag = href ? 'a' : 'span';
+const resolvedHref = href?.startsWith('/') ? withBase(href) : href;
+---
+
+<Tag class="pill" data-variant={variant} href={resolvedHref}>
+  <slot />
+</Tag>

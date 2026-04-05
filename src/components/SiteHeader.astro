@@ -1,0 +1,27 @@
+---
+import { SITE, withBase, withoutBase } from '@/lib/site';
+
+const pathname = withoutBase(Astro.url.pathname).replace(/\/$/, '') || '/';
+---
+
+<header class="topbar">
+  <div class="site-shell topbar__inner">
+    <a class="brand" href={withBase('/')}>
+      <span class="brand__mark">0x</span>
+      <span>{SITE.title}</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary navigation">
+      {SITE.nav.map((item) => {
+        const target = item.href.replace(/\/$/, '') || '/';
+        const isActive = pathname === target;
+
+        return (
+          <a href={withBase(item.href)} data-active={isActive ? 'true' : 'false'}>
+            {item.label}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+</header>
