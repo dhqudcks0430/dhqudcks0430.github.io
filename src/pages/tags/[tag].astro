@@ -20,8 +20,8 @@ export async function getStaticPaths() {
 const { tag, writeups } = Astro.props;
 ---
 
-<BaseLayout title={`Tag: ${tag}`} description={`Writeups tagged with ${tag}.`} pathname={`/tags/${tag}`}>
-  <PageHero eyebrow="Tag" title={`#${tag}`} description={`Generated listing for the ${tag} tag across all published writeups.`} />
+<BaseLayout title={`태그: ${tag}`} description={`${tag} 태그가 붙은 글 모음입니다.`} pathname={`/tags/${tag}`}>
+  <PageHero eyebrow="태그" title={`#${tag}`} description={`게시된 모든 글에서 ${tag} 태그를 모아 생성한 목록입니다.`} />
 
   <section class="site-shell section-spacing">
     <div class="card-grid">

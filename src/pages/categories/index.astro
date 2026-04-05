@@ -8,13 +8,13 @@ const writeups = await getPublishedWriteups();
 const categories = getCategoryMap(writeups);
 ---
 
-<BaseLayout title="Categories" description="Browse categories derived from writeup metadata topics." pathname="/categories">
-  <PageHero eyebrow="Taxonomy" title="Categories" description="Categories are derived from the writeup topic metadata so topic pages stay synchronized with the collection." />
+<BaseLayout title="카테고리" description="글 메타데이터의 주제에서 생성된 카테고리를 둘러봅니다." pathname="/categories">
+  <PageHero eyebrow="분류" title="카테고리" description="카테고리는 글의 주제 메타데이터에서 생성되어, 주제 페이지가 컬렉션과 항상 동기화됩니다." />
 
   <section class="site-shell section-spacing">
     <div class="taxonomy-grid">
       {categories.map(({ term, writeups: groupedWriteups }) => (
-        <TaxonomyCard title={getCategoryLabel(term)} description={groupedWriteups[0]?.data.summary ?? 'Category archive'} href={`/categories/${term}`} count={groupedWriteups.length} />
+        <TaxonomyCard title={getCategoryLabel(term)} description={groupedWriteups[0]?.data.summary ?? '카테고리 아카이브'} href={`/categories/${term}`} count={groupedWriteups.length} />
       ))}
     </div>
   </section>

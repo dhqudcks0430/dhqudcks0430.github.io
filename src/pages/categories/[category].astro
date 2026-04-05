@@ -20,8 +20,8 @@ export async function getStaticPaths() {
 const { category, writeups } = Astro.props;
 ---
 
-<BaseLayout title={`Category: ${getCategoryLabel(category)}`} description={`Writeups in the ${getCategoryLabel(category)} category.`} pathname={`/categories/${category}`}>
-  <PageHero eyebrow="Category" title={getCategoryLabel(category)} description={`Topic-driven archive page for ${getCategoryLabel(category)} writeups.`} />
+<BaseLayout title={`카테고리: ${getCategoryLabel(category)}`} description={`${getCategoryLabel(category)} 카테고리의 글 모음입니다.`} pathname={`/categories/${category}`}>
+  <PageHero eyebrow="카테고리" title={getCategoryLabel(category)} description={`${getCategoryLabel(category)} 글을 주제 중심으로 모은 아카이브 페이지입니다.`} />
 
   <section class="site-shell section-spacing">
     <div class="card-grid">

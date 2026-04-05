@@ -8,13 +8,13 @@ const writeups = await getPublishedWriteups();
 const tags = getTagMap(writeups);
 ---
 
-<BaseLayout title="Tags" description="Browse all tag taxonomies generated from writeup metadata." pathname="/tags">
-  <PageHero eyebrow="Taxonomy" title="Tags" description="Normalized tag listings generated from MDX frontmatter so filtering stays consistent as the archive grows." />
+<BaseLayout title="태그" description="글 메타데이터에서 생성된 모든 태그 분류를 둘러봅니다." pathname="/tags">
+  <PageHero eyebrow="분류" title="태그" description="정규화된 태그 목록은 MDX 프런트매터에서 생성되므로, 아카이브가 커져도 필터링이 일관됩니다." />
 
   <section class="site-shell section-spacing">
     <div class="taxonomy-grid">
       {tags.map(({ term, writeups: taggedWriteups }) => (
-        <TaxonomyCard title={`#${term}`} description={taggedWriteups[0]?.data.summary ?? 'Tag archive'} href={`/tags/${term}`} count={taggedWriteups.length} />
+        <TaxonomyCard title={`#${term}`} description={taggedWriteups[0]?.data.summary ?? '태그 아카이브'} href={`/tags/${term}`} count={taggedWriteups.length} />
       ))}
     </div>
   </section>

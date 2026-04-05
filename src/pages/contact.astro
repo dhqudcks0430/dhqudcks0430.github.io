@@ -15,24 +15,24 @@ const { Content } = await render(page);
 const profileLinks = [] as Array<{ label: string; href: string }>;
 
 if (SITE.github) {
-  profileLinks.push({ label: 'GitHub', href: SITE.github });
+  profileLinks.push({ label: '깃허브', href: SITE.github });
 }
 
 if (SITE.linkedin) {
-  profileLinks.push({ label: 'LinkedIn', href: SITE.linkedin });
+  profileLinks.push({ label: '링크드인', href: SITE.linkedin });
 }
 ---
 
-<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="Static Contact" pathname={page.data.canonicalPath}>
+<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="정적 연락처" pathname={page.data.canonicalPath}>
   <Content />
 
   <section class="section-spacing">
-    <SectionHeader title="Reach out" description="These links are intentionally simple and GitHub Pages-safe: no backend, no form processing, and no hidden service dependency." />
+    <SectionHeader title="연락하기" description="이 링크들은 의도적으로 단순하고 깃허브 페이지에 안전합니다. 백엔드, 폼 처리, 숨은 서비스 의존성이 없습니다." />
     <div class="card-grid">
       <article class="surface panel-card">
-        <span class="eyebrow">Email</span>
-        <h2 style="font-size:1.5rem; margin:0.8rem 0 0.4rem;">Direct conversation</h2>
-        <p class="meta-copy">Use email for collaboration, engineering roles, or technical follow-up.</p>
+        <span class="eyebrow">이메일</span>
+        <h2 style="font-size:1.5rem; margin:0.8rem 0 0.4rem;">직접 대화</h2>
+        <p class="meta-copy">협업, 엔지니어링 포지션, 기술 후속 연락은 이메일을 사용하세요.</p>
         <div class="section-spacing">
           <a class="button-link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
         </div>
@@ -40,9 +40,9 @@ if (SITE.linkedin) {
 
       {profileLinks.length > 0 && (
         <article class="surface panel-card">
-          <span class="eyebrow">Profiles</span>
-          <h2 style="font-size:1.5rem; margin:0.8rem 0 0.4rem;">Public links</h2>
-          <p class="meta-copy">Keep your portfolio and public profiles aligned so readers can move from notes to code quickly.</p>
+          <span class="eyebrow">프로필</span>
+          <h2 style="font-size:1.5rem; margin:0.8rem 0 0.4rem;">공개 링크</h2>
+          <p class="meta-copy">포트폴리오와 공개 프로필을 맞춰 두면 독자가 노트에서 코드로 빠르게 이동할 수 있습니다.</p>
           <div class="cluster section-spacing">
             {profileLinks.map((item) => (
               <a class="button-link" data-variant="ghost" href={item.href} rel="noreferrer" target="_blank">{item.label}</a>

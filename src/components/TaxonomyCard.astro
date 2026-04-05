@@ -13,15 +13,15 @@ const resolvedHref = withBase(href);
 ---
 
 <article class="surface taxonomy-card">
-  <span class="taxonomy-card__eyebrow">Navigation node</span>
+    <span class="taxonomy-card__eyebrow">탐색 노드</span>
   <div class="taxonomy-meta">
     <h3>{title}</h3>
-    <span class="pill" data-variant="accent">{count} posts</span>
+    <span class="pill" data-variant="accent">{count}개 글</span>
   </div>
   <p>{description}</p>
   <div class="section-spacing">
-    <a class="button-link" data-variant="ghost" href={resolvedHref}>
-      Open taxonomy ↗
-    </a>
+      <a class="button-link" data-variant="ghost" href={resolvedHref}>
+      분류 열기 ↗
+      </a>
   </div>
 </article>

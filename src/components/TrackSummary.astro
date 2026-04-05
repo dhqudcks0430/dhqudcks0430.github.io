@@ -15,22 +15,23 @@ const resolvedHref = withBase(href);
 
 <article class="surface track-card">
   <div class="track-card__topline">
-    <span class="eyebrow">Learning Track</span>
-    <span class="track-card__tag">Editorial index</span>
+    <span class="eyebrow">학습 트랙</span>
+    <span class="track-card__tag">에디토리얼 인덱스</span>
   </div>
   <h3>{title}</h3>
   <p>{description}</p>
+  <div class="track-card__rule" aria-hidden="true"></div>
   <div class="track-card__stats section-spacing">
     <div>
       <strong>{total}</strong>
-      <span>Total writeups</span>
+      <span>총 글 수</span>
     </div>
     <div>
       <strong>{featured}</strong>
-      <span>Featured notes</span>
+      <span>추천 노트</span>
     </div>
   </div>
   <div class="section-spacing">
-    <a class="button-link" href={resolvedHref}>Explore track</a>
+    <a class="button-link" href={resolvedHref}>트랙 열기</a>
   </div>
 </article>

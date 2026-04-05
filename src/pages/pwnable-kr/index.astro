@@ -9,19 +9,19 @@ import { getPublishedWriteups, getTrackWriteups } from '@/lib/content';
 const writeups = getTrackWriteups(await getPublishedWriteups(), 'pwnable-kr');
 ---
 
-<BaseLayout title="pwnable.kr" description="Landing page for pwnable.kr challenge writeups and notes." pathname="/pwnable-kr">
-  <PageHero eyebrow="Learning Track" title="pwnable.kr" description="A static archive of classic pwnable.kr writeups covering process control, memory corruption, environment tricks, and reversing." />
+<BaseLayout title="pwnable.kr" description="pwnable.kr 문제 해설과 노트를 모은 랜딩 페이지입니다." pathname="/pwnable-kr">
+  <PageHero eyebrow="학습 트랙" title="pwnable.kr" description="프로세스 제어, 메모리 손상, 환경 트릭, 리버싱을 다루는 고전 pwnable.kr 글 아카이브입니다." />
 
   <section class="site-shell section-spacing">
     <div class="stats-grid">
-      <StatCard label="Writeups" value={writeups.length} description="Published pwnable.kr entries in this track." />
-      <StatCard label="Featured" value={writeups.filter((entry) => entry.data.featured).length} description="Entries surfaced as key examples on the landing page." />
-      <StatCard label="Focus" value="Fundamentals" description="Process interfaces, classic pwns, environment abuse, and architecture reading." />
+      <StatCard label="글 수" value={writeups.length} description="이 트랙에 게시된 pwnable.kr 글 수입니다." />
+      <StatCard label="추천" value={writeups.filter((entry) => entry.data.featured).length} description="랜딩 페이지에 핵심 예시로 노출되는 글입니다." />
+      <StatCard label="집중" value="기초" description="프로세스 인터페이스, 고전 pwn, 환경 악용, 아키텍처 읽기입니다." />
     </div>
   </section>
 
   <section class="site-shell section-spacing">
-    <SectionHeader title="Track entries" description="Each challenge page is generated from MDX frontmatter and shares the same premium technical reading layout." />
+    <SectionHeader title="트랙 글" description="각 문제 페이지는 MDX 프런트매터에서 생성되며 같은 프리미엄 기술 읽기 레이아웃을 공유합니다." />
     <div class="card-grid">
       {writeups.map((entry) => (
         <WriteupCard entry={entry} />

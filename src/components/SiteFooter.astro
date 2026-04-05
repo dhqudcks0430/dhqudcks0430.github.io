@@ -10,7 +10,7 @@ import { SITE } from '@/lib/site';
         <p class="footer-copy">{SITE.tagline}</p>
       </div>
 
-      <div class="footer-links" aria-label="Social links">
+      <div class="footer-links" aria-label="소셜 링크">
         {SITE.social.map((item) => (
           <a href={item.href} rel="noreferrer" target={item.href.startsWith('http') ? '_blank' : undefined}>
             {item.label}

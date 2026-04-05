@@ -2,26 +2,37 @@
 import { SITE, withBase, withoutBase } from '@/lib/site';
 
 const pathname = withoutBase(Astro.url.pathname).replace(/\/$/, '') || '/';
+const githubLink = SITE.github || withBase('/contact');
 ---
 
 <header class="topbar">
   <div class="site-shell topbar__inner">
     <a class="brand" href={withBase('/')}>
       <span class="brand__mark">0x</span>
-      <span>{SITE.title}</span>
+      <span class="brand__copy">
+        <strong>{SITE.title}</strong>
+        <small>사이버보안 학습자 · 시스템 해킹 필드 노트</small>
+      </span>
     </a>
 
-    <nav class="nav-links" aria-label="Primary navigation">
-      {SITE.nav.map((item) => {
-        const target = item.href.replace(/\/$/, '') || '/';
-        const isActive = pathname === target;
+    <div class="topbar__controls">
+      <nav class="nav-links" aria-label="주요 탐색">
+        {SITE.nav.map((item) => {
+          const target = item.href.replace(/\/$/, '') || '/';
+          const isActive = pathname === target;
 
-        return (
-          <a href={withBase(item.href)} data-active={isActive ? 'true' : 'false'}>
-            {item.label}
-          </a>
-        );
-      })}
-    </nav>
+          return (
+            <a href={withBase(item.href)} data-active={isActive ? 'true' : 'false'}>
+              {item.label}
+            </a>
+          );
+        })}
+      </nav>
+
+      <a class="topbar__signal" href={githubLink} rel={SITE.github ? 'noreferrer' : undefined} target={SITE.github ? '_blank' : undefined}>
+        <span>실시간 아카이브</span>
+        <strong>@dhqudcks0430</strong>
+      </a>
+    </div>
   </div>
 </header>

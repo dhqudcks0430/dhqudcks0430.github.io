@@ -9,19 +9,19 @@ import { getPublishedWriteups, getTrackWriteups } from '@/lib/content';
 const writeups = getTrackWriteups(await getPublishedWriteups(), 'dreamhack-system-hacking');
 ---
 
-<BaseLayout title="DreamHack System Hacking" description="Landing page for DreamHack system-hacking writeups and progress notes." pathname="/dreamhack/system-hacking">
-  <PageHero eyebrow="Learning Track" title="DreamHack System Hacking" description="A curated static archive of DreamHack system-hacking writeups, from classic BOF drills to leak-driven libc reuse." />
+<BaseLayout title="드림핵 시스템 해킹" description="드림핵 시스템 해킹 글과 진행 노트를 모은 랜딩 페이지입니다." pathname="/dreamhack/system-hacking">
+  <PageHero eyebrow="학습 트랙" title="드림핵 시스템 해킹" description="고전적 BOF 연습부터 누수 기반 libc 재사용까지 아우르는 드림핵 시스템 해킹 글 아카이브입니다." />
 
   <section class="site-shell section-spacing">
     <div class="stats-grid">
-      <StatCard label="Writeups" value={writeups.length} description="Published DreamHack entries in this track." />
-      <StatCard label="Featured" value={writeups.filter((entry) => entry.data.featured).length} description="Highlighted entries surfaced on the home page." />
-      <StatCard label="Focus" value="Binary exploitation" description="Stack control, shellcode, leaks, and format string practice." />
+      <StatCard label="글 수" value={writeups.length} description="이 트랙에 게시된 드림핵 글 수입니다." />
+      <StatCard label="추천" value={writeups.filter((entry) => entry.data.featured).length} description="홈 페이지에 노출되는 강조 글입니다." />
+      <StatCard label="집중" value="바이너리 익스플로잇" description="스택 제어, 셸코드, 누수, 포맷 문자열 연습입니다." />
     </div>
   </section>
 
   <section class="site-shell section-spacing">
-    <SectionHeader title="Track entries" description="Every page below is generated from collection metadata and rendered through the same technical writeup layout." />
+    <SectionHeader title="트랙 글" description="아래의 모든 페이지는 컬렉션 메타데이터에서 생성되며 같은 기술 글 레이아웃으로 렌더링됩니다." />
     <div class="card-grid">
       {writeups.map((entry) => (
         <WriteupCard entry={entry} />

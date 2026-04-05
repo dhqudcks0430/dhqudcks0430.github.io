@@ -9,11 +9,11 @@ const writeups = await getPublishedWriteups();
 const archiveGroups = getArchiveGroups(writeups);
 ---
 
-<BaseLayout title="Archive" description="Chronological archive of all published writeups and challenge notes." pathname="/archive">
-  <PageHero eyebrow="Archive" title="All writeups" description="Every published note, grouped by year and generated directly from the MDX content collection." />
+<BaseLayout title="아카이브" description="게시된 모든 글과 문제 노트의 연대순 아카이브입니다." pathname="/archive">
+  <PageHero eyebrow="아카이브" title="모든 글" description="게시된 모든 노트를 연도별로 묶어 MDX 콘텐츠 컬렉션에서 직접 생성합니다." />
 
   <section class="site-shell section-spacing">
-    <SectionHeader title="Chronological view" description="Useful when you want to see learning progression over time instead of filtering by track or taxonomy." />
+    <SectionHeader title="연대순 보기" description="트랙이나 분류 대신 시간 흐름으로 학습 진행 상황을 보고 싶을 때 유용합니다." />
     <ArchiveList groups={archiveGroups} />
   </section>
 </BaseLayout>

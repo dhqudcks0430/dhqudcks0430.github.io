@@ -21,7 +21,7 @@ const writeupHref = withBase(getWriteupPath(entry));
 
 <article class="surface lead-writeup-card">
   <div class="lead-writeup-card__topline">
-    <span class="lead-writeup-card__series">Lead story</span>
+    <span class="lead-writeup-card__series">대표 글</span>
     <span class="lead-writeup-card__date">{formatDate(entry.data.publishedAt)}</span>
   </div>
 
@@ -41,7 +41,7 @@ const writeupHref = withBase(getWriteupPath(entry));
 
   <div class="lead-writeup-card__meta">
     <div class="grid" style="gap:0.75rem;">
-      <span class="lead-writeup-card__summary-label">Why it matters</span>
+      <span class="lead-writeup-card__summary-label">핵심 포인트</span>
       <p class="meta-copy">{entry.data.summary}</p>
       <div class="cluster">
         {entry.data.tags.slice(0, 4).map((tag) => (
@@ -50,6 +50,6 @@ const writeupHref = withBase(getWriteupPath(entry));
       </div>
     </div>
 
-    <a class="button-link" href={writeupHref}>Read lead writeup</a>
+    <a class="button-link" href={writeupHref}>대표 노트 읽기</a>
   </div>
 </article>

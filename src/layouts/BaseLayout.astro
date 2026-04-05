@@ -27,7 +27,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <SEOHead
       title={title}
@@ -54,15 +54,15 @@ const {
         const button = document.createElement('button');
         button.className = 'copy-button';
         button.type = 'button';
-        button.textContent = 'Copy';
-        labels.set(button, 'Copy');
+          button.textContent = '복사';
+          labels.set(button, '복사');
         button.addEventListener('click', async () => {
           const content = block.querySelector('code')?.innerText ?? block.innerText;
           await navigator.clipboard.writeText(content);
-          button.textContent = 'Copied';
-          window.setTimeout(() => {
-            button.textContent = labels.get(button) ?? 'Copy';
-          }, 1200);
+           button.textContent = '복사됨';
+           window.setTimeout(() => {
+            button.textContent = labels.get(button) ?? '복사';
+           }, 1200);
         });
         block.append(button);
         block.dataset.enhanced = 'true';

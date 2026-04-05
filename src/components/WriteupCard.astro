@@ -13,7 +13,7 @@ const writeupHref = withBase(getWriteupPath(entry));
 
 <article class="surface writeup-card">
   <div class="writeup-card__topline">
-    <span class="writeup-card__series">Field Note</span>
+    <span class="writeup-card__series">필드 노트</span>
     <span class="writeup-card__date">{formatDate(entry.data.publishedAt)}</span>
   </div>
 
@@ -40,7 +40,7 @@ const writeupHref = withBase(getWriteupPath(entry));
   <div class="taxonomy-meta">
     <span class="meta-copy">{entry.data.summary}</span>
     <a class="button-link" data-variant="ghost" href={writeupHref}>
-      Read writeup
+      노트 읽기 ↗
     </a>
   </div>
 </article>

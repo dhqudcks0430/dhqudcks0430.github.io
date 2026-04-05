@@ -1,40 +1,40 @@
 export const SITE = {
   title: 'dhqudcks0430 Notes',
   shortTitle: 'dhqudcks0430',
-  description: 'A static developer portfolio and system-hacking writeup hub for dhqudcks0430, focused on cybersecurity learning, exploit practice, and technical notes.',
+  description: 'dhqudcks0430의 정적 개발자 포트폴리오이자 시스템 해킹 글 아카이브로, 사이버보안 학습·익스플로잇 연습·기술 메모에 집중합니다.',
   author: 'dhqudcks0430',
   email: 'ddonggojin.gg@gmail.com',
   github: 'https://github.com/dhqudcks0430',
   linkedin: '',
-  tagline: 'Cybersecurity learner, system-hacking writeup archive, and dark minimal technical blog.',
+  tagline: '사이버보안 학습자, 시스템 해킹 글 아카이브, 다크 미니멀 기술 블로그.',
   accent: '#73e2a7',
   nav: [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
-    { label: 'Archive', href: '/archive' },
-    { label: 'Tags', href: '/tags' },
-    { label: 'Categories', href: '/categories' }
+    { label: '홈', href: '/' },
+    { label: '소개', href: '/about' },
+    { label: '연락처', href: '/contact' },
+    { label: '아카이브', href: '/archive' },
+    { label: '태그', href: '/tags' },
+    { label: '카테고리', href: '/categories' }
   ],
   tracks: [
     {
-      label: 'DreamHack System Hacking',
-      shortLabel: 'DreamHack',
+      label: '드림핵 시스템 해킹',
+      shortLabel: '드림핵',
       href: '/dreamhack/system-hacking',
       trackKey: 'dreamhack-system-hacking',
-      description: 'Binary exploitation progress notes, stack discipline, shellcode drills, and mitigation-aware workflow.'
+      description: '바이너리 익스플로잇 진행 노트, 스택 제어, 셸코드 연습, 완화기법을 고려한 작업 흐름.'
     },
     {
       label: 'pwnable.kr',
       shortLabel: 'pwnable.kr',
       href: '/pwnable-kr',
       trackKey: 'pwnable-kr',
-      description: 'Classic pwnable.kr challenge writeups focused on fundamentals, environment control, and exploit craft.'
+      description: '기초, 환경 제어, 익스플로잇 기법에 초점을 둔 pwnable.kr 문제 해설 모음.'
     }
   ],
   social: [
-    { label: 'GitHub', href: 'https://github.com/dhqudcks0430' },
-    { label: 'Email', href: 'mailto:ddonggojin.gg@gmail.com' }
+    { label: '깃허브', href: 'https://github.com/dhqudcks0430' },
+    { label: '이메일', href: 'mailto:ddonggojin.gg@gmail.com' }
   ]
 } as const;
 
@@ -61,33 +61,33 @@ export const withoutBase = (pathname: string) => {
 };
 
 export const TOPIC_LABELS: Record<string, string> = {
-  'system-hacking': 'System Hacking',
-  pwn: 'Pwn',
-  reversing: 'Reversing',
-  'web-security': 'Web Security',
-  crypto: 'Crypto',
-  forensics: 'Forensics',
-  misc: 'Misc',
-  tooling: 'Tooling'
+  'system-hacking': '시스템 해킹',
+  pwn: '포너블',
+  reversing: '리버싱',
+  'web-security': '웹 보안',
+  crypto: '크립토',
+  forensics: '포렌식',
+  misc: '기타',
+  tooling: '도구'
 };
 
 export const DIFFICULTY_LABELS: Record<string, string> = {
-  beginner: 'Beginner',
-  easy: 'Easy',
-  medium: 'Medium',
-  hard: 'Hard',
-  insane: 'Insane',
-  unknown: 'Unknown'
+  beginner: '입문',
+  easy: '쉬움',
+  medium: '보통',
+  hard: '어려움',
+  insane: '매우 어려움',
+  unknown: '알 수 없음'
 };
 
 export const STATUS_LABELS: Record<string, string> = {
-  planned: 'Planned',
-  'in-progress': 'In Progress',
-  solved: 'Solved',
-  reviewed: 'Reviewed'
+  planned: '예정',
+  'in-progress': '진행 중',
+  solved: '해결',
+  reviewed: '검토 완료'
 };
 
 export const PLATFORM_LABELS: Record<string, string> = {
-  dreamhack: 'DreamHack',
+  dreamhack: '드림핵',
   'pwnable-kr': 'pwnable.kr'
 };

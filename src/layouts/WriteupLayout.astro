@@ -46,7 +46,7 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
       <Pill>{getDifficultyLabel(entry.data.difficulty)}</Pill>
       <Pill>{getStatusLabel(entry.data.status)}</Pill>
       <Pill>{formatDate(entry.data.publishedAt)}</Pill>
-      {entry.data.updatedAt && <Pill>Updated {formatDate(entry.data.updatedAt)}</Pill>}
+        {entry.data.updatedAt && <Pill>업데이트 {formatDate(entry.data.updatedAt)}</Pill>}
     </div>
   </PageHero>
 
@@ -58,17 +58,17 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
 
       <aside class="content-layout__sidebar">
         <section class="surface sidebar-card">
-          <h3>Challenge Snapshot</h3>
+          <h3>문제 스냅샷</h3>
           <ul class="meta-list">
-            <li><strong>Challenge:</strong> {entry.data.challengeName}</li>
-            <li><strong>Target:</strong> {entry.data.targetType}</li>
+            <li><strong>문제:</strong> {entry.data.challengeName}</li>
+            <li><strong>대상:</strong> {entry.data.targetType}</li>
             <li><strong>OS:</strong> {entry.data.operatingSystem}</li>
-            <li><strong>Summary:</strong> {entry.data.summary}</li>
+            <li><strong>요약:</strong> {entry.data.summary}</li>
           </ul>
         </section>
 
         <section class="surface sidebar-card">
-          <h3>Tech Stack</h3>
+          <h3>기술 스택</h3>
           <div class="cluster">
             {entry.data.tools.map((tool) => (
               <Pill>{tool}</Pill>
@@ -80,7 +80,7 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
         </section>
 
         <section class="surface sidebar-card">
-          <h3>Tags</h3>
+          <h3>태그</h3>
           <div class="cluster">
             {entry.data.tags.map((tag) => (
               <Pill href={`/tags/${tag}`}>#{tag}</Pill>
@@ -89,7 +89,7 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
         </section>
 
         <section class="surface sidebar-card">
-          <h3>On this page</h3>
+          <h3>이 페이지</h3>
           <ul class="toc-list">
             {toc.map((heading) => (
               <li data-level={String(heading.depth)}>

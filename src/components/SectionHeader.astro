@@ -13,14 +13,15 @@ const resolvedHref = href ? withBase(href) : undefined;
 ---
 
 <div class="section-header">
-  <div class="grid" style="gap:0.45rem;">
+  <div class="section-header__copy">
+    <span class="section-header__kicker">섹션</span>
     <h2>{title}</h2>
     <p>{description}</p>
   </div>
 
   {href && linkLabel && (
     <a class="button-link" data-variant="ghost" href={resolvedHref}>
-      {linkLabel}
+      {linkLabel} ↗
     </a>
   )}
 </div>
