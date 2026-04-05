@@ -1,14 +1,7 @@
 ---
 import ContentPageLayout from '@/layouts/ContentPageLayout.astro';
-import LeadWriteupCard from '@/components/LeadWriteupCard.astro';
-import SectionHeader from '@/components/SectionHeader.astro';
-import StatCard from '@/components/StatCard.astro';
-import TaxonomyCard from '@/components/TaxonomyCard.astro';
-import TrackSummary from '@/components/TrackSummary.astro';
-import WriteupCard from '@/components/WriteupCard.astro';
-import { getCategoryLabel, getCategoryMap, getFeaturedWriteups, getPageByKind, getPublishedWriteups, getTagMap, getTrackWriteups } from '@/lib/content';
-import { SITE, withBase } from '@/lib/site';
-import { render } from 'astro:content';
+import { getCategoryLabel, getCategoryMap, getPageByKind, getPublishedWriteups, getTagMap } from '@/lib/content';
+import { withBase } from '@/lib/site';
 
 const page = await getPageByKind('home');
 
@@ -17,15 +10,9 @@ if (!page) {
 }
 
 const writeups = await getPublishedWriteups();
-const featuredWriteups = getFeaturedWriteups(writeups, 4);
-const [leadWriteup, ...secondaryFeaturedWriteups] = featuredWriteups;
 const allTags = getTagMap(writeups);
-const tagMap = allTags.slice(0, 6);
 const categoryMap = getCategoryMap(writeups);
 const featuredCategories = categoryMap.slice(0, 3);
-const dreamhackWriteups = getTrackWriteups(writeups, 'dreamhack-system-hacking');
-const pwnableWriteups = getTrackWriteups(writeups, 'pwnable-kr');
-const { Content } = await render(page);
 ---
 
 <ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="개발자 포트폴리오 + 글 모음" pathname={page.data.canonicalPath}>
@@ -62,70 +49,4 @@ const { Content } = await render(page);
       </div>
     </div>
   </Fragment>
-
-  <Content />
-
-  <section class="section-spacing">
-    <div class="stats-grid">
-      <StatCard label="게시됨" value={writeups.length} description="콘텐츠 컬렉션에서 생성한 정적 MDX 글입니다." />
-      <StatCard label="트랙" value={SITE.tracks.length} description="드림핵과 pwnable.kr 진행 상황을 위한 전용 랜딩 페이지입니다." />
-      <StatCard label="태그" value={allTags.length} description="기법과 주제를 필터링하기 위한 정규화된 분류어입니다." />
-    </div>
-  </section>
-
-  <section class="section-spacing">
-    <SectionHeader title="추천 글" description="아카이브의 톤, 구조, 기술 깊이를 보여주는 핵심 노트들입니다." href="/archive" linkLabel="전체 아카이브 보기" />
-    {leadWriteup && (
-      <div class="featured-grid">
-        <LeadWriteupCard entry={leadWriteup} />
-        <div class="featured-grid__rail">
-          {secondaryFeaturedWriteups.map((entry) => (
-            <WriteupCard entry={entry} />
-          ))}
-        </div>
-      </div>
-    )}
-  </section>
-
-  <section class="section-spacing">
-    <SectionHeader title="학습 트랙" description="각 플랫폼을 분리해 가독성을 유지하면서도 하나의 콘텐츠 기반 디자인 시스템을 공유합니다." />
-    <div class="track-grid">
-      <TrackSummary
-        href="/dreamhack/system-hacking"
-        title="드림핵 시스템 해킹"
-        description="익스플로잇 개발 연습, 고전적 메모리 손상 실습, 완화기법을 고려한 작업 흐름."
-        total={dreamhackWriteups.length}
-        featured={dreamhackWriteups.filter((entry) => entry.data.featured).length}
-      />
-      <TrackSummary
-        href="/pwnable-kr"
-        title="pwnable.kr"
-        description="고전 pwnable.kr 문제 노트, 프로세스 제어 연습, 리버싱 실습을 모은 아카이브입니다."
-        total={pwnableWriteups.length}
-        featured={pwnableWriteups.filter((entry) => entry.data.featured).length}
-      />
-    </div>
-  </section>
-
-  <section class="section-spacing">
-      <SectionHeader title="분류 바로가기" description="태그와 카테고리는 글 메타데이터에서 생성되므로, 글이 늘어나도 아카이브 탐색이 일관됩니다." />
-      <div class="taxonomy-grid">
-        {tagMap.map(({ term, writeups: taggedWriteups }) => (
-        <TaxonomyCard
-          title={`#${term}`}
-          description={`${term} 기법/주제와 연결된 노트를 모아 봅니다.`}
-          href={`/tags/${term}`}
-          publishedAt={taggedWriteups[0]?.data.publishedAt}
-        />
-        ))}
-        {categoryMap.slice(0, 2).map(({ term, writeups: groupedWriteups }) => (
-        <TaxonomyCard
-          title={getCategoryLabel(term)}
-          description={`${getCategoryLabel(term)} 관련 노트를 한 번에 모아 보는 아카이브 묶음입니다.`}
-          href={`/categories/${term}`}
-          publishedAt={groupedWriteups[0]?.data.publishedAt}
-        />
-        ))}
-      </div>
-  </section>
 </ContentPageLayout>

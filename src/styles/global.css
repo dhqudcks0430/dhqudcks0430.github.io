@@ -181,16 +181,6 @@ kbd {
   gap: 1rem;
 }
 
-.featured-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-.featured-grid__rail {
-  display: grid;
-  gap: 1rem;
-}
-
 .page-hero {
   padding: 7rem 0 2.5rem;
 }
@@ -404,8 +394,6 @@ kbd {
 }
 
 .panel-card::before,
-.lead-writeup-card::before,
-.track-card::before,
 .taxonomy-card::before,
 .writeup-card::before {
   content: '';
@@ -425,70 +413,6 @@ kbd {
   transition: transform 180ms ease, border-color 180ms ease;
   position: relative;
   overflow: hidden;
-}
-
-.lead-writeup-card {
-  display: grid;
-  gap: 1rem;
-  padding: 1.95rem;
-  border-radius: var(--radius-lg);
-  position: relative;
-  overflow: hidden;
-  background:
-    linear-gradient(135deg, rgba(115, 226, 167, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(13, 25, 38, 0.98), rgba(8, 15, 24, 1));
-}
-
-.lead-writeup-card::after {
-  content: '';
-  position: absolute;
-  inset: auto -15% -35% auto;
-  width: 18rem;
-  height: 18rem;
-  background: radial-gradient(circle, rgba(115, 226, 167, 0.16), transparent 65%);
-  pointer-events: none;
-}
-
-.lead-writeup-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.lead-writeup-card h3 {
-  margin: 0;
-  font-size: clamp(2.4rem, 4vw, 3.6rem);
-  letter-spacing: -0.05em;
-  line-height: 0.98;
-  max-width: 14ch;
-}
-
-.lead-writeup-card p {
-  margin: 0;
-  color: var(--text-muted);
-  line-height: 1.8;
-}
-
-.lead-writeup-card__topline,
-.lead-writeup-card__meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-start;
-}
-
-.lead-writeup-card__series,
-.lead-writeup-card__summary-label {
-  color: var(--accent-strong);
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.lead-writeup-card__date {
-  color: var(--text-soft);
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .writeup-card:hover {
@@ -556,8 +480,7 @@ kbd {
   align-items: start;
 }
 
-.stat-card__label-row,
-.track-card__topline {
+.stat-card__label-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -565,7 +488,6 @@ kbd {
 }
 
 .stat-card__marker,
-.track-card__tag,
 .taxonomy-card__eyebrow {
   color: var(--text-soft);
   font-size: 0.74rem;
@@ -654,29 +576,6 @@ kbd {
 .hero-signal-card__list strong {
   font-size: 1rem;
   color: var(--accent-strong);
-}
-
-.track-card__stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-
-.track-card__stats div {
-  display: grid;
-  gap: 0.25rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--border);
-}
-
-.track-card__stats strong {
-  font-size: 1.6rem;
-  letter-spacing: -0.04em;
-}
-
-.track-card__stats span {
-  color: var(--text-muted);
-  font-size: 0.92rem;
 }
 
 .taxonomy-card h3 {
@@ -924,38 +823,6 @@ kbd {
   gap: 1rem;
 }
 
-.track-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1rem;
-}
-
-.track-card {
-  padding: 1.65rem;
-  border-radius: var(--radius-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.track-card h3 {
-  margin: 0.7rem 0;
-  font-size: 1.5rem;
-  letter-spacing: -0.04em;
-}
-
-.track-card__rule {
-  width: 100%;
-  height: 1px;
-  margin-top: 1rem;
-  background: linear-gradient(90deg, rgba(121, 239, 184, 0.28), rgba(121, 239, 184, 0));
-}
-
-.track-card p {
-  margin: 0;
-  color: var(--text-muted);
-  line-height: 1.75;
-}
-
 .footer {
   padding: 2rem 0 3rem;
 }
@@ -996,11 +863,6 @@ kbd {
 }
 
 @media (min-width: 64rem) {
-  .featured-grid {
-    grid-template-columns: minmax(0, 1.55fr) minmax(20rem, 0.9fr);
-    align-items: start;
-  }
-
   .page-hero__inner {
     grid-template-columns: minmax(0, 1.85fr) minmax(19rem, 0.95fr);
     align-items: stretch;
@@ -1024,7 +886,6 @@ kbd {
   .page-hero__inner,
   .panel-card,
   .writeup-card,
-  .track-card,
   .taxonomy-card,
   .archive-card,
   .sidebar-card,
@@ -1035,10 +896,7 @@ kbd {
   .section-header,
   .taxonomy-meta,
   .stat-card__label-row,
-  .track-card__topline,
-  .writeup-card__topline,
-  .lead-writeup-card__topline,
-  .lead-writeup-card__meta {
+  .writeup-card__topline {
     align-items: start;
     flex-direction: column;
   }
@@ -1101,11 +959,6 @@ kbd {
     width: 100%;
   }
 
-  .lead-writeup-card h3 {
-    max-width: none;
-    font-size: clamp(2rem, 8vw, 2.75rem);
-  }
-
   .hero-intro-strip {
     border-radius: 1rem;
     align-items: flex-start;
@@ -1114,9 +967,5 @@ kbd {
 
   .hero-intro-strip span + span::before {
     display: none;
-  }
-
-  .track-card__stats {
-    grid-template-columns: 1fr;
   }
 }
