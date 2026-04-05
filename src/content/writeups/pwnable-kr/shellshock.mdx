@@ -1,0 +1,102 @@
+---
+title: shellshock — Environment Variables as the Attack Surface
+slug: shellshock
+description: A pwnable.kr shellshock note about understanding how the shell parses exported functions and why environment inheritance can become code execution.
+publishedAt: 2025-04-17
+updatedAt: 2025-04-19
+draft: false
+featured: false
+platform: pwnable-kr
+learningTrack: pwnable-kr
+topic: web-security
+difficulty: medium
+status: solved
+challengeName: shellshock
+targetType: Bash-based command execution challenge
+operatingSystem: Linux
+tags:
+  - shellshock
+  - env-variables
+  - bash
+  - command-injection
+techniques:
+  - exported-function-abuse
+  - environment-inheritance
+tools:
+  - bash
+  - ssh
+  - env
+summary: Treat environment variables as executable input, reproduce the vulnerable Bash parsing behavior, and deliver the command through inherited process state.
+seoTitle: pwnable.kr shellshock Writeup
+seoDescription: pwnable.kr shellshock writeup covering inherited environment variables, Bash parsing, and command execution.
+canonicalPath: /pwnable-kr/shellshock
+---
+
+## Overview
+
+`shellshock` is a good example of a challenge where the source tells you the exploit class immediately. The wrapper eventually invokes Bash, and the only real question is whether that Bash build still interprets function-looking environment variables in the vulnerable Shellshock way. Once the answer is yes, the solve is a one-line environment injection.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Primitive | Shellshock / `CVE-2014-6271`-style env parsing |
+| Input Surface | Environment variables inherited by a Bash subprocess |
+| Goal | Make Bash run `/bin/cat flag` before the normal command |
+
+## Environment & Tools
+
+Because the bug is in Bash itself, I stayed close to the shell and used the classic function-prefix probe first.
+
+```bash
+env x='() { :;}; echo vulnerable' ./bash -c 'echo test'
+```
+
+## Recon
+
+The key source clue is that the wrapper eventually does something equivalent to:
+
+```c
+system("/home/shellshock/bash -c 'echo shock_me'");
+```
+
+That means the wrapper is not the exploit target; the Bash process it spawns is. So the first useful check is whether a function-shaped environment variable triggers command execution in that Bash binary.
+
+## Vulnerability Analysis
+
+If the test prints your injected text before `echo shock_me`, the target is vulnerable. At that point the challenge becomes pure environment control.
+
+## Exploitation Steps
+
+The final solve is the familiar Shellshock payload with the flag-read command appended.
+
+```bash
+env x='() { :;}; /bin/cat flag' ./shellshock
+```
+
+Some runs end with a crash after the flag is printed. That is fine here; the important part is that the command executes before the normal Bash path.
+
+## Payload/Technique Breakdown
+
+What makes the post feel real is naming the actual boundary:
+
+- the wrapper program is boring,
+- the vulnerable interpreter is Bash,
+- the payload lives in inherited environment state,
+- the exploit wins before the intended shell command runs.
+
+## Result
+
+The injected environment variable forces the bundled Bash binary to execute `/bin/cat flag`, which is enough to solve the challenge in one step.
+
+## Lessons Learned
+
+- Legacy parser bugs still teach excellent process-boundary lessons.
+- When the source invokes a known-vulnerable interpreter, reproduce that interpreter path first.
+- Shellshock writeups feel stronger when they mention the exact Bash invocation instead of only the payload syntax.
+
+## References
+
+- Shellshock CVE writeups
+- Bash environment inheritance behavior
+- Historical command injection timelines

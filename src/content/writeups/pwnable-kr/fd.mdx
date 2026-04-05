@@ -1,0 +1,117 @@
+---
+title: fd — Reading the Prompt as an Interface Contract
+slug: fd
+description: A pwnable.kr fundamentals writeup about file descriptor redirection and why environment setup matters as much as the exploit idea.
+publishedAt: 2024-03-09
+updatedAt: 2024-03-09
+draft: false
+featured: true
+featuredWeight: 4
+platform: pwnable-kr
+learningTrack: pwnable-kr
+topic: misc
+difficulty: beginner
+status: reviewed
+challengeName: fd
+targetType: Linux command-line challenge binary
+operatingSystem: Linux
+tags:
+  - file-descriptor
+  - stdin-redirection
+  - process-control
+techniques:
+  - fd-remapping
+  - argument-handling
+tools:
+  - ssh
+  - bash
+  - python
+summary: Understand how the challenge maps user input to file descriptors and solve it by respecting the program's interface contract instead of overcomplicating the path.
+seoTitle: pwnable.kr fd Writeup
+seoDescription: pwnable.kr fd writeup covering descriptor remapping, stdin control, and clean process setup.
+canonicalPath: /pwnable-kr/fd
+---
+
+## Overview
+
+`fd` is one of the clearest pwnable.kr warmups because the binary already tells you what matters: it subtracts `0x1234` from your argument and uses the result as the file descriptor for `read()`. The solve is just to make that effective descriptor become `0`, then feed the expected password through standard input.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Core Idea | Make `atoi(argv[1]) - 0x1234` evaluate to `0` |
+| Input Path | `read(fd, buf, 32)` with the computed descriptor |
+| Goal | Pass `LETMEWIN\n` into stdin |
+
+## Environment & Tools
+
+The challenge is usually solved directly on the remote shell. I only needed the shell plus one exact-input command.
+
+```bash
+./fd 4660
+python -c 'print "LETMEWIN"' | ./fd 4660
+```
+
+## Recon
+
+The decisive source line is effectively this:
+
+```c
+int fd = atoi(argv[1]) - 0x1234;
+read(fd, buf, 32);
+```
+
+So the only arithmetic that matters is:
+
+```text
+atoi(argv[1]) - 0x1234 = 0
+argv[1] = 0x1234 = 4660
+```
+
+That immediately turns the challenge from “find an exploit” into “prepare the process so `read()` uses stdin.”
+
+## Vulnerability Analysis
+
+There is no memory corruption primitive here. The important behavior is that the binary is set up to read from a descriptor derived from user input. Once the effective descriptor is `0`, the remaining condition is just a string comparison against `LETMEWIN\n`.
+
+## Exploitation Steps
+
+The shortest working solve is to run the binary with `4660` and pipe the password into it.
+
+```bash
+python -c 'print "LETMEWIN"' | ./fd 4660
+```
+
+If you want to see why it works, it is literally this flow:
+
+1. `argv[1] = 4660`
+2. `4660 - 0x1234 = 0`
+3. `read(0, buf, 32)` reads from stdin
+4. stdin contains `LETMEWIN\n`
+
+## Payload/Technique Breakdown
+
+This challenge feels more real when written as a process contract:
+
+- choose the argument that maps to stdin,
+- keep the input exact,
+- let the privileged binary read the password for you.
+
+There is no hidden second stage.
+
+## Result
+
+The binary consumes the password from stdin, satisfies the `strcmp`, and reveals the flag through the privileged execution path.
+
+## Lessons Learned
+
+- File descriptors are part of the attack surface.
+- If the source gives you the arithmetic directly, do that arithmetic first.
+- Warmup challenges feel much less “magical” once you write down the process model explicitly.
+
+## References
+
+- POSIX file descriptor basics
+- Linux standard stream conventions
+- Simple shell piping patterns

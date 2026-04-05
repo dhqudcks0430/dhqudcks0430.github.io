@@ -1,0 +1,112 @@
+---
+title: collision — Reverse the Check Before You Touch the Payload
+slug: collision
+description: A pwnable.kr writeup focused on understanding the comparison logic first, then constructing exact integer chunks that satisfy the expected sum.
+publishedAt: 2024-07-12
+updatedAt: 2024-07-12
+draft: false
+featured: false
+platform: pwnable-kr
+learningTrack: pwnable-kr
+topic: crypto
+difficulty: easy
+status: solved
+challengeName: collision
+targetType: Linux challenge binary
+operatingSystem: Linux
+tags:
+  - integer-arithmetic
+  - input-crafting
+  - byte-order
+techniques:
+  - controlled-sum-construction
+  - little-endian-packing
+tools:
+  - python
+  - gdb
+summary: Understand the target checksum logic, then pack the exact 32-bit values required to hit the success constant under the program's endianness rules.
+seoTitle: pwnable.kr collision Writeup
+seoDescription: pwnable.kr collision writeup covering integer chunk construction, endianness, and checksum reasoning.
+canonicalPath: /pwnable-kr/collision
+---
+
+## Overview
+
+`collision` looks like a crypto challenge only because of the name. The actual check is much simpler: the program takes a 20-byte argument, casts it to five 32-bit integers, and checks whether their sum is `0x21DD09EC`. Once that is clear, the solve is just controlled little-endian packing.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Primitive | 20-byte argv value reinterpreted as five integers |
+| Core Logic | `a[0] + a[1] + a[2] + a[3] + a[4] == 0x21DD09EC` |
+| Goal | Pack five 32-bit chunks whose sum hits the target |
+
+## Environment & Tools
+
+The solve is tiny enough that Python is all you need. The only easy mistake is endianness.
+
+```python
+from struct import pack
+
+payload = pack('<I', 0x06C5CEC8) * 4 + pack('<I', 0x06C5CECC)
+```
+
+## Recon
+
+Two source details matter:
+
+1. `strlen(argv[1])` must be `20`
+2. the password is cast to `int *` and summed across five words
+
+That means this is not a real hash collision. It is a five-word integer-sum problem with a hard-coded target.
+
+## Vulnerability Analysis
+
+The target value is:
+
+```text
+0x21DD09EC
+```
+
+One common valid split is:
+
+```text
+0x06C5CEC8 * 4 + 0x06C5CECC = 0x21DD09EC
+```
+
+So the only real job is to deliver those five integers as raw little-endian bytes.
+
+## Exploitation Steps
+
+I used four equal words and one remainder word, then emitted them as raw bytes.
+
+```bash
+python -c 'print "\xc8\xce\xc5\x06"*4 + "\xcc\xce\xc5\x06"' | xxd
+```
+
+When used as the 20-byte argv payload, those words satisfy the check without brute force.
+
+## Payload/Technique Breakdown
+
+This challenge becomes “real” once you stop thinking in strings and start thinking in machine words:
+
+- the program wants exactly 20 bytes,
+- those bytes are treated as 5 little-endian integers,
+- the sum must equal `0x21DD09EC`.
+
+## Result
+
+With the bytes packed in little-endian order, the check passes immediately and the binary prints the success path.
+
+## Lessons Learned
+
+- The challenge name is more misleading than the code.
+- Integer interpretation details matter more than “crypto” intuition here.
+- For argv-based puzzles, raw byte control is often the whole challenge.
+
+## References
+
+- Python `struct.pack`
+- Little-endian integer representation notes
+- pwnable.kr foundational challenge discussions
