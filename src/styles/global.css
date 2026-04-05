@@ -959,6 +959,12 @@ kbd {
 }
 
 @media (min-width: 64rem) {
+  .page-hero h1,
+  .page-hero h2 {
+    white-space: nowrap;
+    max-width: none;
+  }
+
   .featured-grid {
     grid-template-columns: minmax(0, 1.55fr) minmax(20rem, 0.9fr);
     align-items: start;
