@@ -234,10 +234,11 @@ kbd {
 .page-hero h1,
 .page-hero h2 {
   margin: 0;
-  font-size: clamp(3rem, 6vw, 5.3rem);
-  line-height: 0.9;
+  font-size: clamp(1.55rem, 3.2vw, 2.7rem);
+  line-height: 1.02;
   letter-spacing: -0.055em;
-  max-width: 12ch;
+  max-width: none;
+  white-space: nowrap;
 }
 
 .page-hero p {
@@ -959,12 +960,6 @@ kbd {
 }
 
 @media (min-width: 64rem) {
-  .page-hero h1,
-  .page-hero h2 {
-    white-space: nowrap;
-    max-width: none;
-  }
-
   .featured-grid {
     grid-template-columns: minmax(0, 1.55fr) minmax(20rem, 0.9fr);
     align-items: start;
@@ -1055,8 +1050,7 @@ kbd {
 
   .page-hero h1,
   .page-hero h2 {
-    max-width: none;
-    font-size: clamp(2.5rem, 9vw, 3.5rem);
+    font-size: clamp(1.3rem, 5.3vw, 1.9rem);
   }
 
   .hero-signal-grid {
