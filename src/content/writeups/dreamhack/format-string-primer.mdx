@@ -1,0 +1,98 @@
+---
+title: Format String Primer — Turning Output Into a Write Primitive
+slug: format-string-primer
+description: A DreamHack format string writeup focused on stack discovery, controlled reads, and careful escalation toward writes without corrupting state early.
+publishedAt: 2025-09-06
+updatedAt: 2025-09-08
+draft: false
+featured: false
+platform: dreamhack
+learningTrack: dreamhack-system-hacking
+topic: system-hacking
+difficulty: medium
+status: reviewed
+challengeName: format-string-primer
+targetType: ELF 64-bit variadic printf binary
+operatingSystem: Linux
+tags:
+  - format-string
+  - stack-leak
+  - arbitrary-write
+  - got-overwrite
+techniques:
+  - positional-arguments
+  - short-writes
+tools:
+  - pwntools
+  - pwndbg
+  - checksec
+summary: Start by mapping stack positions and read behavior, then promote the bug into a constrained write primitive with positional format specifiers.
+seoTitle: Format String Primer DreamHack Writeup
+seoDescription: DreamHack format string writeup covering leaks, positional arguments, and GOT-targeted short writes.
+canonicalPath: /dreamhack/system-hacking/format-string-primer
+---
+
+## Overview
+
+Format string bugs reward patience. The challenge is rarely “can I print stack values?” The real challenge is understanding **which slot is mine**, how much output I can produce without breaking the program, and whether a short-write strategy is safer than aiming for a single large write.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Primitive | User input passed directly into `printf` |
+| Strength | Read and write capability through format specifiers |
+| Goal | Leak state, then redirect a control-sensitive pointer |
+
+## Environment & Tools
+
+The debugger mattered here because visualizing argument positions and target addresses made the exploit much easier to reason about than trying to infer everything from output alone.
+
+```bash
+gdb -q ./format-string-primer
+python -c "print('%p ' * 20)"
+```
+
+## Recon
+
+The first pass was all about locating input on the stack. I sent a marker followed by repeated `%p` probes until the marker appeared back in the printed arguments.
+
+That established the positional offset, which is the anchor for both future leaks and `%n`-style writes.
+
+## Vulnerability Analysis
+
+Once the positional argument was known, the exploit had two safe phases:
+
+1. leak pointers to understand memory layout,
+2. perform small writes with `%hn` instead of trying to place a large value all at once.
+
+The write primitive is powerful, but it is also fragile. Incremental writes are slower, but much easier to recover and verify.
+
+## Exploitation Steps
+
+I used a staged payload strategy where addresses were placed first and the format string only attempted small, ordered writes.
+
+```python
+payload = flat(target_addr, target_addr + 2)
+payload += f"%{low}c%7$hn%{high - low}c%8$hn".encode()
+```
+
+## Payload/Technique Breakdown
+
+The main idea is to control the total printed character count and write that value into memory with `%hn`. Short writes reduce risk because they avoid huge format widths and let each half-word be validated independently.
+
+## Result
+
+A controlled GOT overwrite redirected execution cleanly after the correct stack position and print counts were confirmed.
+
+## Lessons Learned
+
+- A format string challenge should begin with stack mapping, not with `%n`.
+- Small writes are slower but much more reliable.
+- Positional arguments turn a noisy bug into a predictable primitive.
+
+## References
+
+- `printf` positional parameter documentation
+- pwntools `fmtstr_payload`
+- GOT and PLT internals overview

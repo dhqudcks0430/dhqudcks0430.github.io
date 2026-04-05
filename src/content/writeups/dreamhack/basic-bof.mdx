@@ -1,0 +1,122 @@
+---
+title: Basic BOF — Building a Reliable Stack Overflow Routine
+slug: basic-bof
+description: A starter DreamHack system-hacking writeup focused on finding offset control, stabilizing execution, and proving the crash path before payload work.
+publishedAt: 2024-02-18
+updatedAt: 2024-02-21
+draft: false
+featured: true
+featuredWeight: 1
+platform: dreamhack
+learningTrack: dreamhack-system-hacking
+topic: system-hacking
+difficulty: beginner
+status: reviewed
+challengeName: basic-bof
+targetType: ELF 64-bit userland binary
+operatingSystem: Linux
+tags:
+  - stack-overflow
+  - offset-finding
+  - pwntools
+  - gdb
+techniques:
+  - cyclic-patterns
+  - saved-rip-control
+tools:
+  - pwndbg
+  - pwntools
+  - checksec
+summary: Establish the crash primitive, confirm exact saved return pointer control, and only then start shaping a minimal exploit path.
+seoTitle: Basic BOF DreamHack Writeup
+seoDescription: Beginner DreamHack system-hacking writeup covering stack offsets, RIP control, and a reliable exploitation workflow.
+canonicalPath: /dreamhack/system-hacking/basic-bof
+---
+
+## Overview
+
+This challenge is intentionally simple, which makes it perfect for building a good routine. The goal is not to rush to the payload. The goal is to **prove each assumption**: input length, crash location, offset accuracy, and whether the binary gives a direct win path once control lands where expected.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Binary | Non-PIE 64-bit ELF |
+| Primitive | Classic stack buffer overflow |
+| Win Condition | Redirect control flow into a reachable success routine |
+
+## Environment & Tools
+
+I used `checksec` first to get the mitigation story, then `pwndbg` to inspect the exact stack frame shape. `pwntools` handled the cyclic pattern generation and let me automate retries without changing the reasoning process between local runs.
+
+```bash
+checksec ./basic-bof
+python -c "from pwn import *; print(cyclic(200).decode())"
+gdb -q ./basic-bof
+```
+
+## Recon
+
+The initial program flow exposed a single input sink after a short prompt. That usually means the fastest confirmation path is:
+
+1. send increasingly long input,
+2. verify a clean crash,
+3. recover the overwritten return pointer, and
+4. map the exact offset.
+
+The crash behaved deterministically, which is what makes beginner buffer overflow challenges so valuable for training. There was no format ambiguity, no partial overwrite, and no heap state to reason about.
+
+## Vulnerability Analysis
+
+Once the saved return pointer contained a known cyclic value, the only thing left was translating that value back into an offset and confirming that the same offset worked repeatedly.
+
+```python
+from pwn import *
+
+crash_value = 0x6161616c
+offset = cyclic_find(crash_value)
+print(offset)
+```
+
+The important lesson here is that **repeatability matters more than speed**. If the offset changes between runs, the exploit is not ready.
+
+## Exploitation Steps
+
+After finding the target success function in the symbol table, the exploit reduced to a controlled overwrite with a direct jump target.
+
+```python
+from pwn import *
+
+io = process('./basic-bof')
+payload = flat(
+    b'A' * 72,
+    0x4011b6,
+)
+io.sendline(payload)
+io.interactive()
+```
+
+## Payload/Technique Breakdown
+
+The payload has only two parts:
+
+- padding up to saved RIP,
+- the address of the reachable win function.
+
+That simplicity is useful because it isolates the overflow itself from more advanced topics like stack alignment, argument control, or libc reuse.
+
+## Result
+
+The binary consistently redirected into the success path, which confirmed the offset, crash model, and local exploit loop were all correct.
+
+## Lessons Learned
+
+- Always validate control before chasing a “clever” payload.
+- Beginner BOF challenges are the right place to make your exploit loop boring and reproducible.
+- Saving exact notes about offset calculation pays off later when the primitives become noisier.
+
+## References
+
+- pwndbg documentation
+- pwntools cyclic pattern utilities
+- System V AMD64 calling convention notes

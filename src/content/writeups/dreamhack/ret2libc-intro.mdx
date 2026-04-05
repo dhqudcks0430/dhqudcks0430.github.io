@@ -1,0 +1,112 @@
+---
+title: ret2libc Intro — Leaking First, Reusing Later
+slug: ret2libc-intro
+description: A DreamHack ret2libc introduction showing how to split the exploit into a leak stage and a reuse stage instead of guessing libc offsets blindly.
+publishedAt: 2025-01-14
+updatedAt: 2025-01-15
+draft: false
+featured: true
+featuredWeight: 3
+platform: dreamhack
+learningTrack: dreamhack-system-hacking
+topic: pwn
+difficulty: medium
+status: solved
+challengeName: ret2libc-intro
+targetType: ELF 64-bit NX-enabled binary
+operatingSystem: Linux
+tags:
+  - ret2libc
+  - plt-got
+  - rop
+  - libc-leak
+techniques:
+  - libc-address-disclosure
+  - two-stage-rop
+tools:
+  - pwntools
+  - ropper
+  - pwndbg
+summary: Split the attack into a clean information leak and a second-stage return-oriented payload once libc base is known.
+seoTitle: ret2libc Intro DreamHack Writeup
+seoDescription: DreamHack ret2libc writeup covering GOT leaks, libc base calculation, and a two-stage ROP flow.
+canonicalPath: /dreamhack/system-hacking/ret2libc-intro
+---
+
+## Overview
+
+This challenge is where the workflow starts to matter more than the bug itself. A stack overflow alone is not enough when NX is active. The exploit becomes reliable only after the process is divided into **stage one: leak**, and **stage two: reuse**.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Mitigation | NX enabled |
+| Primitive | Saved RIP overwrite |
+| Strategy | Leak libc address, compute base, call `system` |
+
+## Environment & Tools
+
+I used `ropper` for quick gadget confirmation, `pwndbg` for stack inspection, and `pwntools` for the staged interaction loop.
+
+```bash
+checksec ./ret2libc-intro
+ropper --file ./ret2libc-intro --search "pop rdi"
+```
+
+## Recon
+
+The binary had a classic shape for ret2libc training: a controllable overflow, imported libc functions, and a re-entry point that made a second payload easy after the leak.
+
+The critical question became: **which address can be leaked with the fewest moving parts?** `puts@got` was the cleanest answer because a `puts@plt(puts@got)` chain is readable, common, and simple to verify.
+
+## Vulnerability Analysis
+
+Direct shellcode injection was unavailable because NX blocked stack execution. That pushed the exploit toward code reuse. Once one libc pointer is disclosed, the rest of the chain becomes arithmetic rather than guesswork.
+
+```python
+libc_base = leaked_puts - libc.symbols['puts']
+system = libc_base + libc.symbols['system']
+binsh = libc_base + next(libc.search(b'/bin/sh'))
+```
+
+## Exploitation Steps
+
+The first payload leaked `puts`, then returned to `main` so the program could accept a second payload in a stable state.
+
+```python
+payload = flat(
+    b'A' * 72,
+    pop_rdi,
+    elf.got['puts'],
+    elf.plt['puts'],
+    elf.symbols['main'],
+)
+```
+
+The second payload reused the resolved libc addresses and invoked `system("/bin/sh")`.
+
+## Payload/Technique Breakdown
+
+This pattern is powerful because each stage has a single job:
+
+- stage one proves disclosure,
+- stage two proves reuse.
+
+That separation makes debugging much faster. If the leak is wrong, there is no need to inspect the second payload at all.
+
+## Result
+
+The leak-derived libc base stayed stable, and the second-stage ROP chain produced an interactive shell without brute force or partial guesses.
+
+## Lessons Learned
+
+- Treat information disclosure as its own exploit milestone.
+- Returning to `main` is often the cleanest way to keep state manageable.
+- ret2libc becomes much easier once each stage is independently testable.
+
+## References
+
+- libc database workflows
+- ROP Emporium ret2win / split patterns
+- pwntools ELF and ROP helpers

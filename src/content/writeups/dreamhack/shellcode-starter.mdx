@@ -1,0 +1,108 @@
+---
+title: Shellcode Starter — Keeping the Execution Surface Small
+slug: shellcode-starter
+description: DreamHack shellcode practice focused on executable memory, null-byte awareness, and short payload iteration loops.
+publishedAt: 2024-05-07
+updatedAt: 2024-05-08
+draft: false
+featured: true
+featuredWeight: 2
+platform: dreamhack
+learningTrack: dreamhack-system-hacking
+topic: system-hacking
+difficulty: easy
+status: reviewed
+challengeName: shellcode-starter
+targetType: ELF 64-bit executable-memory challenge
+operatingSystem: Linux
+tags:
+  - shellcode
+  - executable-memory
+  - asm
+  - pwntools
+techniques:
+  - execve-shellcode
+  - null-byte-avoidance
+tools:
+  - pwntools
+  - pwndbg
+  - nasm
+summary: Build a compact shell-spawning payload, watch for bad bytes, and validate register state before assuming the shellcode is wrong.
+seoTitle: Shellcode Starter DreamHack Writeup
+seoDescription: DreamHack shellcode writeup covering executable memory, payload constraints, and iterative debugging.
+canonicalPath: /dreamhack/system-hacking/shellcode-starter
+---
+
+## Overview
+
+This writeup is about staying disciplined with shellcode challenges. The binary made execution possible, but the difference between “almost works” and “works every time” came down to inspecting registers, input constraints, and how the target copied user data into memory.
+
+## Challenge Snapshot
+
+| Field | Value |
+| --- | --- |
+| Primitive | User-controlled bytes executed as code |
+| Constraint | Tight payload budget with bad-byte sensitivity |
+| Goal | Spawn a shell through a compact `execve` sequence |
+
+## Environment & Tools
+
+The feedback loop stayed short: assemble, inject, single-step the first few instructions, and confirm that the stack and argument pointers still matched the intended layout.
+
+```bash
+nasm -f elf64 shell.asm -o shell.o
+python -c "from pwn import *; print(asm(shellcraft.sh()))"
+```
+
+## Recon
+
+The program accepted bytes and transferred execution without much ceremony. That made the real challenge about **payload quality**, not about hijacking control flow.
+
+I verified three things immediately:
+
+- where the bytes landed,
+- whether the landing region was executable, and
+- whether the read routine preserved the entire payload.
+
+## Vulnerability Analysis
+
+There was no complicated bug chain here. The vulnerability model was direct code execution. The nuance came from constraints: short input, potential terminators, and the need to avoid introducing bytes that truncated the injected sequence.
+
+## Exploitation Steps
+
+I started from a known-good `shellcraft.sh()` payload and then shrank or adjusted it only after confirming the baseline path.
+
+```python
+from pwn import *
+
+context.arch = 'amd64'
+io = process('./shellcode-starter')
+payload = asm(shellcraft.sh())
+io.send(payload)
+io.interactive()
+```
+
+## Payload/Technique Breakdown
+
+The payload relies on a standard `execve("/bin/sh", 0, 0)` sequence. The interesting part is not the syscall itself; it is the validation around it:
+
+- inspect memory permissions,
+- confirm instruction pointer handoff,
+- ensure the shellcode bytes are intact, and
+- only then optimize length.
+
+## Result
+
+Once the execution handoff and byte integrity were confirmed, the stock payload spawned a shell without needing trickier encoding.
+
+## Lessons Learned
+
+- Treat shellcode work as a memory-placement problem first and an assembly problem second.
+- If a known-good payload fails, validate the transport path before rewriting instructions.
+- Tiny challenges are ideal for practicing clean debugger notes.
+
+## References
+
+- pwntools shellcraft reference
+- Linux x86_64 syscall table
+- x86_64 shellcode minimization notes
