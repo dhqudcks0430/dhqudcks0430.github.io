@@ -1,0 +1,21 @@
+---
+import OpenCheckLayout from '@/layouts/OpenCheckLayout.astro';
+import { getPublishedOpenCheckPosts } from '@/lib/content';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedOpenCheckPosts();
+
+  return posts.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry }
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<OpenCheckLayout entry={entry} headings={headings} pathname={entry.data.canonicalPath}>
+  <Content />
+</OpenCheckLayout>
