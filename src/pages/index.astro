@@ -1,6 +1,6 @@
 ---
 import ContentPageLayout from '@/layouts/ContentPageLayout.astro';
-import { getCategoryLabel, getCategoryMap, getPageByKind, getPublishedWriteups, getTagMap } from '@/lib/content';
+import { getPageByKind, getPublishedOpenCheckPosts, getPublishedWriteups, getTagMap } from '@/lib/content';
 import { withBase } from '@/lib/site';
 
 const page = await getPageByKind('home');
@@ -10,41 +10,37 @@ if (!page) {
 }
 
 const writeups = await getPublishedWriteups();
+const opencheckPosts = await getPublishedOpenCheckPosts();
 const allTags = getTagMap(writeups);
-const categoryMap = getCategoryMap(writeups);
-const featuredCategories = categoryMap.slice(0, 3);
 ---
 
-<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="개발자 포트폴리오 + 글 모음" pathname={page.data.canonicalPath}>
+<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="개발일지 기록" pathname={page.data.canonicalPath}>
   <Fragment slot="hero">
     <div class="hero-signal-grid">
       <div class="hero-intro-strip surface">
-        <span>서울 기반 학습 아카이브</span>
-        <span>{writeups.length}개 게시 글</span>
+        <span>개발일지</span>
+        <span>{writeups.length + opencheckPosts.length}개 기록</span>
         <span>{allTags.length}개 태그</span>
       </div>
 
       <div class="hero-actions">
-        <a class="button-link" href={withBase('/archive')}>아카이브 보기</a>
-        <a class="button-link" data-variant="ghost" href={withBase('/dreamhack/system-hacking')}>드림핵 트랙</a>
-        <a class="button-link" data-variant="ghost" href={withBase('/pwnable-kr')}>pwnable.kr 트랙</a>
+        <a class="button-link" href={withBase('/opencheck')}>OpenCheck</a>
+        <a class="button-link" data-variant="ghost" href={withBase('/dreamhack/system-hacking')}>시스템 해킹</a>
+        <a class="button-link" data-variant="ghost" href={withBase('/study')}>공부 기록</a>
       </div>
 
       <div class="hero-signal-card surface">
         <span class="hero-signal-card__label">현재 집중</span>
-        <strong>시스템 해킹, 바이너리 익스플로잇, 재현 가능한 글쓰기</strong>
-        <p>편집 기사 첫 화면처럼 구성한 기술 아카이브입니다. 더 강한 타이포그래피, 촘촘한 메타데이터, 더 빠른 문제 트랙 진입을 목표로 합니다.</p>
+        <strong>OpenCheck 제작, 보안 공부, 꾸준한 개발일지</strong>
+        <p>완성된 결과보다 만드는 과정과 판단을 남기는 블로그입니다. 오늘 한 일, 막힌 점, 다음 작업을 읽기 쉽게 정리합니다.</p>
       </div>
 
       <div class="hero-signal-card surface">
-        <span class="hero-signal-card__label">추천 카테고리</span>
+        <span class="hero-signal-card__label">주제 바로가기</span>
         <div class="hero-signal-card__list">
-          {featuredCategories.map(({ term, writeups: groupedWriteups }) => (
-            <a href={withBase(`/categories/${term}`)}>
-              <span>{getCategoryLabel(term)}</span>
-              <strong>{groupedWriteups.length}</strong>
-            </a>
-          ))}
+          <a href={withBase('/opencheck')}><span>OpenCheck</span><strong>{opencheckPosts.length}</strong></a>
+          <a href={withBase('/dreamhack/system-hacking')}><span>시스템 해킹</span><strong>{writeups.length}</strong></a>
+          <a href={withBase('/gap-year')}><span>갭이어</span><strong>기록</strong></a>
         </div>
       </div>
     </div>
