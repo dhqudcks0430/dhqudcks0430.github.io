@@ -1,0 +1,67 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import Pill from '@/components/Pill.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import StatCard from '@/components/StatCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatDate, getOpenCheckPath, getPublishedOpenCheckPosts } from '@/lib/content';
+import { withBase } from '@/lib/site';
+
+const posts = await getPublishedOpenCheckPosts();
+const allTags = [...new Set(posts.flatMap((entry) => entry.data.tags))];
+---
+
+<BaseLayout title="OpenCheck" description="오픈소스 신뢰도 점검 도구 OpenCheck 개발 기록입니다." pathname="/opencheck">
+  <PageHero
+    eyebrow="프로젝트 로그"
+    title="OpenCheck"
+    description="오픈소스 저장소의 위험 신호를 분석하고 신뢰도 판단을 돕는 도구를 만드는 기록입니다."
+  />
+
+  <section class="site-shell section-spacing">
+    <div class="stats-grid">
+      <StatCard label="글 수" value={posts.length} description="OpenCheck 개발 과정에서 공개한 노트 수입니다." />
+      <StatCard label="태그" value={allTags.length} description="분석, 백엔드, 프론트엔드, 문서화 흐름을 묶는 키워드입니다." />
+      <StatCard label="상태" value="진행 중" description="정적 분석 규칙과 리포트 형식을 다듬는 단계입니다." />
+    </div>
+  </section>
+
+  <section class="site-shell section-spacing">
+    <SectionHeader title="개발 기록" description="OpenCheck를 만들며 남긴 설계, 구현, 시행착오 노트입니다." />
+    <div class="card-grid">
+      {posts.map((entry) => (
+        <article class="surface writeup-card">
+          <div class="writeup-card__topline">
+            <span class="writeup-card__series">OpenCheck</span>
+            <span class="writeup-card__date">{formatDate(entry.data.publishedAt)}</span>
+          </div>
+
+          <div class="cluster">
+            <Pill variant="accent">{entry.data.area}</Pill>
+            <Pill>{entry.data.status}</Pill>
+          </div>
+
+          <div class="grid" style="gap:0.55rem;">
+            <h3>
+              <a href={withBase(getOpenCheckPath(entry))}>{entry.data.title}</a>
+            </h3>
+            <p>{entry.data.description}</p>
+          </div>
+
+          <div class="cluster">
+            {entry.data.tags.slice(0, 4).map((tag) => (
+              <Pill>#{tag}</Pill>
+            ))}
+          </div>
+
+          <div class="taxonomy-meta">
+            <span class="meta-copy">{entry.data.summary}</span>
+            <a class="button-link" data-variant="ghost" href={withBase(getOpenCheckPath(entry))}>
+              노트 읽기 ↗
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
