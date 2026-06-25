@@ -11,6 +11,7 @@ export const SITE = {
   nav: [
     { label: '홈', href: '/' },
     { label: '소개', href: '/about' },
+    { label: 'OpenCheck', href: '/opencheck' },
     { label: '연락처', href: '/contact' },
     { label: '아카이브', href: '/archive' },
     { label: '태그', href: '/tags' },
