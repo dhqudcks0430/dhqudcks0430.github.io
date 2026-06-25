@@ -1,0 +1,48 @@
+---
+import { SITE, withBase, withoutBase } from '@/lib/site';
+
+const pathname = withoutBase(Astro.url.pathname).replace(/\/$/, '') || '/';
+
+const isActive = (href: string) => {
+  const target = href.replace(/\/$/, '') || '/';
+  return pathname === target || (target !== '/' && pathname.startsWith(`${target}/`));
+};
+---
+
+<aside class="site-sidebar" aria-label="블로그 주제 탐색">
+  <div class="sidebar-profile">
+    <a class="sidebar-profile__mark" href={withBase('/')} aria-label="홈으로 이동">bc</a>
+    <div class="sidebar-profile__copy">
+      <strong>{SITE.profile.name}</strong>
+      <span>{SITE.profile.role}</span>
+      <p>{SITE.profile.description}</p>
+    </div>
+    <a class="sidebar-profile__link" href={SITE.github} rel="noreferrer" target="_blank">GitHub</a>
+  </div>
+
+  <nav class="sidebar-topics">
+    {SITE.sidebarTopics.map((topic) => (
+      <section class="sidebar-topic">
+        <div class="sidebar-topic__header">
+          <strong>{topic.label}</strong>
+          <span>{topic.description}</span>
+        </div>
+        <div class="sidebar-topic__links">
+          {topic.items.map((item) => (
+            <a href={withBase(item.href)} data-active={isActive(item.href) ? 'true' : 'false'}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </nav>
+
+  <div class="sidebar-secondary">
+    {SITE.nav.map((item) => (
+      <a href={withBase(item.href)} data-active={isActive(item.href) ? 'true' : 'false'}>
+        {item.label}
+      </a>
+    ))}
+  </div>
+</aside>
