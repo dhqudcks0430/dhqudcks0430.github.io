@@ -1,0 +1,31 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="갭이어" description="방향을 다시 정리하고 생활과 학습 리듬을 기록하는 공간입니다." pathname="/gap-year">
+  <PageHero
+    eyebrow="갭이어"
+    title="잠깐 멈춰서 방향을 정리하는 기록"
+    description="무엇을 배우고 싶은지, 어떤 생활 리듬이 맞는지, 다시 출발하기 위해 남기는 생각을 모읍니다."
+  />
+
+  <section class="site-shell section-spacing">
+    <SectionHeader title="기록 방식" description="아직 글이 많지 않아도 흐름을 잃지 않도록 작은 단위로 남깁니다." />
+    <div class="card-grid">
+      <article class="surface panel-card">
+        <h3>생각 정리</h3>
+        <p class="meta-copy">지금 왜 멈췄는지, 무엇을 다시 선택하고 싶은지 짧게 적습니다.</p>
+      </article>
+      <article class="surface panel-card">
+        <h3>생활 리듬</h3>
+        <p class="meta-copy">수면, 운동, 공부 시간처럼 꾸준함에 영향을 주는 요소를 기록합니다.</p>
+      </article>
+      <article class="surface panel-card">
+        <h3>다음 행동</h3>
+        <p class="meta-copy">막연한 계획보다 바로 할 수 있는 다음 작업 하나를 남깁니다.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
