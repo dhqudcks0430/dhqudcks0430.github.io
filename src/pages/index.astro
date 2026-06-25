@@ -1,6 +1,15 @@
 ---
-import ContentPageLayout from '@/layouts/ContentPageLayout.astro';
-import { getPageByKind, getPublishedOpenCheckPosts, getPublishedWriteups, getTagMap } from '@/lib/content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Pill from '@/components/Pill.astro';
+import {
+  formatDate,
+  getCategoryLabel,
+  getOpenCheckPath,
+  getPageByKind,
+  getPublishedOpenCheckPosts,
+  getPublishedWriteups,
+  getWriteupPath
+} from '@/lib/content';
 import { withBase } from '@/lib/site';
 
 const page = await getPageByKind('home');
@@ -11,38 +20,146 @@ if (!page) {
 
 const writeups = await getPublishedWriteups();
 const opencheckPosts = await getPublishedOpenCheckPosts();
-const allTags = getTagMap(writeups);
+
+const latestPosts = [
+  ...opencheckPosts.map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    href: getOpenCheckPath(entry),
+    category: 'OpenCheck',
+    publishedAt: entry.data.publishedAt
+  })),
+  ...writeups.map((entry) => ({
+    title: entry.data.title,
+    description: entry.data.description,
+    href: getWriteupPath(entry),
+    category: getCategoryLabel(entry.data.topic),
+    publishedAt: entry.data.publishedAt
+  }))
+].sort((left, right) => right.publishedAt.getTime() - left.publishedAt.getTime()).slice(0, 6);
+
+const categoryCards = [
+  { rank: '#1', title: 'OpenCheck', count: opencheckPosts.length, href: '/opencheck', description: '오픈소스 신뢰도 점검 도구 개발 기록' },
+  { rank: '#2', title: 'System Hacking', count: writeups.length, href: '/dreamhack/system-hacking', description: '시스템 해킹 문제 풀이와 보안 학습 노트' },
+  { rank: '#3', title: 'Study', count: 'log', href: '/study', description: '개발과 보안 공부를 다시 꺼내기 쉽게 정리' },
+  { rank: '#4', title: 'Gap Year', count: 'note', href: '/gap-year', description: '방향과 생활 리듬을 정리하는 개인 기록' }
+];
 ---
 
-<ContentPageLayout title={page.data.title} description={page.data.description} eyebrow="개발일지 기록" pathname={page.data.canonicalPath}>
-  <Fragment slot="hero">
-    <div class="hero-signal-grid">
-      <div class="hero-intro-strip surface">
-        <span>개발일지</span>
-        <span>{writeups.length + opencheckPosts.length}개 기록</span>
-        <span>{allTags.length}개 태그</span>
-      </div>
+<BaseLayout title={page.data.title} description={page.data.description} pathname={page.data.canonicalPath}>
+  <section class="home-cover">
+    <div class="site-shell home-cover__inner">
+      <div class="home-cover__eyebrow">BUILD WHAT I LEARN</div>
+      <div class="home-cover__grid">
+        <div class="home-cover__copy">
+          <span class="home-cover__brand">dhqudcks0430 Dev</span>
+          <h1>Hello World !</h1>
+          <p class="home-cover__lead">OpenCheck 제작, 보안 공부, 갭이어와 학습 과정을 한곳에 남기는 개발일지입니다.</p>
+          <p>완성된 결과만 보여주기보다 오늘의 시행착오와 다음 행동까지 기록합니다.</p>
+          <div class="hero-actions">
+            <a class="button-link" href={withBase('/opencheck')}>OpenCheck 보기</a>
+            <a class="button-link" data-variant="ghost" href={withBase('/archive')}>전체 글</a>
+          </div>
+        </div>
 
-      <div class="hero-actions">
-        <a class="button-link" href={withBase('/opencheck')}>OpenCheck</a>
-        <a class="button-link" data-variant="ghost" href={withBase('/dreamhack/system-hacking')}>시스템 해킹</a>
-        <a class="button-link" data-variant="ghost" href={withBase('/study')}>공부 기록</a>
-      </div>
-
-      <div class="hero-signal-card surface">
-        <span class="hero-signal-card__label">현재 집중</span>
-        <strong>OpenCheck 제작, 보안 공부, 꾸준한 개발일지</strong>
-        <p>완성된 결과보다 만드는 과정과 판단을 남기는 블로그입니다. 오늘 한 일, 막힌 점, 다음 작업을 읽기 쉽게 정리합니다.</p>
-      </div>
-
-      <div class="hero-signal-card surface">
-        <span class="hero-signal-card__label">주제 바로가기</span>
-        <div class="hero-signal-card__list">
-          <a href={withBase('/opencheck')}><span>OpenCheck</span><strong>{opencheckPosts.length}</strong></a>
-          <a href={withBase('/dreamhack/system-hacking')}><span>시스템 해킹</span><strong>{writeups.length}</strong></a>
-          <a href={withBase('/gap-year')}><span>갭이어</span><strong>기록</strong></a>
+        <div class="home-cover__panel">
+          <strong>Welcome</strong>
+          <p>보안, 공부, 프로젝트 기록을 카테고리별로 둘러보세요.</p>
+          <div class="home-cover__mini-links">
+            <a href={withBase('/dreamhack/system-hacking')}>System Hacking</a>
+            <a href={withBase('/opencheck')}>OpenCheck</a>
+            <a href={withBase('/study')}>Study</a>
+          </div>
         </div>
       </div>
+
+      <div class="home-stats">
+        <article>
+          <strong>{writeups.length + opencheckPosts.length}</strong>
+          <span>총 기록</span>
+        </article>
+        <article>
+          <strong>{writeups.length}</strong>
+          <span>보안 노트</span>
+        </article>
+        <article>
+          <strong>{opencheckPosts.length}</strong>
+          <span>프로젝트 글</span>
+        </article>
+        <article>
+          <strong>3</strong>
+          <span>블로그 주제</span>
+        </article>
+      </div>
     </div>
-  </Fragment>
-</ContentPageLayout>
+  </section>
+
+  <section class="site-shell section-spacing">
+    <div class="home-section-heading">
+      <span>Popular Category</span>
+      <h2>인기있는 카테고리</h2>
+      <p>지금 블로그에서 가장 먼저 볼 만한 주제들입니다.</p>
+    </div>
+
+    <div class="home-category-grid">
+      {categoryCards.map((category) => (
+        <a class="home-category-card surface" href={withBase(category.href)}>
+          <span>{category.rank}</span>
+          <strong>{category.title}</strong>
+          <p>{category.description}</p>
+          <small>{category.count} Articles</small>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="site-shell section-spacing">
+    <div class="home-section-heading">
+      <span>Latest Posts</span>
+      <h2>최신 글</h2>
+      <p>최근에 추가된 개발일지와 보안 학습 기록입니다.</p>
+    </div>
+
+    <div class="home-post-grid">
+      {latestPosts.map((post) => (
+        <article class="home-post-card surface">
+          <div class="home-post-card__thumb">{post.category.slice(0, 2)}</div>
+          <div class="home-post-card__body">
+            <div class="cluster">
+              <Pill variant="accent">{post.category}</Pill>
+              <Pill>{formatDate(post.publishedAt)}</Pill>
+            </div>
+            <h3><a href={withBase(post.href)}>{post.title}</a></h3>
+            <p>{post.description}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="site-shell section-spacing">
+    <div class="home-section-heading">
+      <span>Course</span>
+      <h2>기록 흐름</h2>
+      <p>왼쪽 카테고리와 같은 기준으로 글을 쌓아갑니다.</p>
+    </div>
+
+    <div class="home-course surface">
+      <div>
+        <span>Develop</span>
+        <a href={withBase('/opencheck')}>OpenCheck</a>
+        <a href={withBase('/archive')}>개발일지</a>
+      </div>
+      <div>
+        <span>Security</span>
+        <a href={withBase('/dreamhack/system-hacking')}>시스템 해킹</a>
+        <a href={withBase('/opencheck')}>OSS Security</a>
+      </div>
+      <div>
+        <span>Journal</span>
+        <a href={withBase('/gap-year')}>갭이어</a>
+        <a href={withBase('/study')}>공부</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
