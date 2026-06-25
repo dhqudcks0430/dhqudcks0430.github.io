@@ -3,6 +3,7 @@ import { DIFFICULTY_LABELS, PLATFORM_LABELS, SITE, STATUS_LABELS, TOPIC_LABELS }
 
 export type WriteupEntry = CollectionEntry<'writeups'>;
 export type PageEntry = CollectionEntry<'pages'>;
+export type OpenCheckEntry = CollectionEntry<'opencheck'>;
 
 export const formatDate = (value: Date) =>
   new Intl.DateTimeFormat('en', {
@@ -12,6 +13,9 @@ export const formatDate = (value: Date) =>
   }).format(value);
 
 export const sortWriteups = (items: WriteupEntry[]) =>
+  [...items].sort((left, right) => right.data.publishedAt.getTime() - left.data.publishedAt.getTime());
+
+export const sortOpenCheckPosts = (items: OpenCheckEntry[]) =>
   [...items].sort((left, right) => right.data.publishedAt.getTime() - left.data.publishedAt.getTime());
 
 export const sortFeaturedWriteups = (items: WriteupEntry[]) =>
@@ -26,6 +30,9 @@ export const sortFeaturedWriteups = (items: WriteupEntry[]) =>
   });
 
 export const getPublishedWriteups = async () => sortWriteups(await getCollection('writeups', ({ data }) => !data.draft));
+
+export const getPublishedOpenCheckPosts = async () =>
+  sortOpenCheckPosts(await getCollection('opencheck', ({ data }) => !data.draft));
 
 export const getPublishedPages = async () =>
   [...(await getCollection('pages', ({ data }) => !data.draft))].sort((left, right) => left.data.navOrder - right.data.navOrder);
@@ -45,6 +52,8 @@ export const getWriteupPath = (entry: WriteupEntry) =>
   entry.data.learningTrack === 'dreamhack-system-hacking'
     ? `/dreamhack/system-hacking/${entry.slug}`
     : `/pwnable-kr/${entry.slug}`;
+
+export const getOpenCheckPath = (entry: OpenCheckEntry) => `/opencheck/${entry.slug}`;
 
 export const getCategoryValue = (entry: WriteupEntry) => entry.data.topic;
 export const getCategoryLabel = (value: string) => TOPIC_LABELS[value] ?? value;
