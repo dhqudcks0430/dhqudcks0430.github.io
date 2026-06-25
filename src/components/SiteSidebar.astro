@@ -11,13 +11,19 @@ const isActive = (href: string) => {
 
 <aside class="site-sidebar" aria-label="블로그 주제 탐색">
   <div class="sidebar-profile">
-    <a class="sidebar-profile__mark" href={withBase('/')} aria-label="홈으로 이동">bc</a>
+    <a class="sidebar-profile__mark" href={withBase('/')} aria-label="홈으로 이동">D</a>
     <div class="sidebar-profile__copy">
-      <strong>{SITE.profile.name}</strong>
+      <strong>{SITE.title}</strong>
       <span>{SITE.profile.role}</span>
       <p>{SITE.profile.description}</p>
     </div>
     <a class="sidebar-profile__link" href={SITE.github} rel="noreferrer" target="_blank">GitHub</a>
+  </div>
+
+  <div class="sidebar-stats" aria-label="블로그 요약">
+    <span><strong>Dev</strong> Log</span>
+    <span><strong>3</strong> Topics</span>
+    <span><strong>1</strong> Project</span>
   </div>
 
   <nav class="sidebar-topics">
@@ -39,6 +45,7 @@ const isActive = (href: string) => {
   </nav>
 
   <div class="sidebar-secondary">
+    <strong class="sidebar-secondary__title">Page</strong>
     {SITE.nav.map((item) => (
       <a href={withBase(item.href)} data-active={isActive(item.href) ? 'true' : 'false'}>
         {item.label}
