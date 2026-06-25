@@ -58,7 +58,28 @@ const pages = defineCollection({
   })
 });
 
+const opencheck = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string().min(3),
+    description: z.string().min(16),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+    status: z.enum(['planned', 'in-progress', 'shipped', 'reviewed']),
+    area: z.enum(['planning', 'backend', 'frontend', 'analysis', 'docs', 'release']),
+    repositoryUrl: z.string().url().optional(),
+    tags: tagSchema,
+    summary: z.string().min(24),
+    nextSteps: z.array(z.string().min(2)).min(1),
+    seoTitle: z.string().optional(),
+    seoDescription: z.string().optional(),
+    canonicalPath: z.string().regex(/^\//, 'canonicalPath must start with /.').optional()
+  })
+});
+
 export const collections = {
   writeups,
-  pages
+  pages,
+  opencheck
 };
