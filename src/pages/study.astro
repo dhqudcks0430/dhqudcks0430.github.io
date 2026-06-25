@@ -1,0 +1,31 @@
+---
+import PageHero from '@/components/PageHero.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="공부 기록" description="보안과 개발 공부를 복습 가능한 노트로 쌓아 두는 공간입니다." pathname="/study">
+  <PageHero
+    eyebrow="공부"
+    title="배운 내용을 다시 꺼낼 수 있게 남기기"
+    description="개념, 실습, 질문, 복습 포인트를 작게 쪼개서 기록합니다."
+  />
+
+  <section class="site-shell section-spacing">
+    <SectionHeader title="기록 주제" description="당장 완벽한 글보다 나중에 다시 볼 수 있는 단서를 우선합니다." />
+    <div class="card-grid">
+      <article class="surface panel-card">
+        <h3>보안 개념</h3>
+        <p class="meta-copy">시스템 해킹, 웹 보안, 분석 도구에서 만난 개념을 정리합니다.</p>
+      </article>
+      <article class="surface panel-card">
+        <h3>개발 메모</h3>
+        <p class="meta-copy">Python, FastAPI, React처럼 프로젝트를 만들며 배운 내용을 남깁니다.</p>
+      </article>
+      <article class="surface panel-card">
+        <h3>복습 질문</h3>
+        <p class="meta-copy">이해가 애매한 부분은 질문 형태로 남겨 다음 공부의 출발점으로 씁니다.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
