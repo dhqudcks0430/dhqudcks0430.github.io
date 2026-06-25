@@ -118,20 +118,12 @@ kbd {
 }
 
 .sidebar-profile__copy span,
-.sidebar-profile__copy p,
-.sidebar-topic__header span,
 .footer-copy {
   color: rgba(247, 248, 251, 0.66);
 }
 
 .sidebar-profile__copy span {
   font-size: 0.84rem;
-}
-
-.sidebar-profile__copy p {
-  display: none;
-  margin: 0;
-  line-height: 1.65;
 }
 
 .sidebar-profile__link {
@@ -144,29 +136,6 @@ kbd {
   background: rgba(255, 255, 255, 0.06);
 }
 
-.sidebar-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.45rem;
-}
-
-.sidebar-stats span {
-  display: grid;
-  gap: 0.1rem;
-  padding: 0.65rem 0.45rem;
-  border: 1px solid var(--border-dark);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.045);
-  color: rgba(247, 248, 251, 0.62);
-  font-size: 0.72rem;
-  text-align: center;
-}
-
-.sidebar-stats strong {
-  color: var(--text-on-dark);
-  font-size: 0.92rem;
-}
-
 .sidebar-topics {
   display: flex;
   gap: 0.75rem;
@@ -177,7 +146,6 @@ kbd {
 .sidebar-topic {
   flex: 0 0 14rem;
   display: grid;
-  gap: 0.55rem;
   padding: 0.8rem;
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-md);
@@ -185,25 +153,38 @@ kbd {
 }
 
 .sidebar-topic__header {
-  display: grid;
-  gap: 0.2rem;
-}
-
-.sidebar-topic__header strong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  list-style: none;
   color: var(--text-on-dark);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
+  font-weight: 850;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.sidebar-topic__header span {
-  font-size: 0.75rem;
-  line-height: 1.45;
+.sidebar-topic__header::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-topic__header::after {
+  content: '⌄';
+  color: rgba(247, 248, 251, 0.56);
+  font-size: 0.78rem;
+  transition: transform 160ms ease;
+}
+
+.sidebar-topic[open] .sidebar-topic__header::after {
+  transform: rotate(180deg);
 }
 
 .sidebar-topic__links {
   display: grid;
   gap: 0.18rem;
+  margin-top: 0.55rem;
 }
 
 .sidebar-topic__links a,
@@ -1041,13 +1022,6 @@ kbd {
     border-bottom: 1px solid var(--border-dark);
   }
 
-  .sidebar-profile__copy p {
-    display: block;
-    grid-column: 1 / -1;
-    margin-top: 0.45rem;
-    font-size: 0.9rem;
-  }
-
   .sidebar-profile__link {
     grid-column: 1 / -1;
     width: fit-content;
@@ -1102,8 +1076,6 @@ kbd {
     padding: 0.75rem;
   }
 
-  .sidebar-profile__copy p,
-  .sidebar-stats,
   .home-cover__panel {
     display: none;
   }
