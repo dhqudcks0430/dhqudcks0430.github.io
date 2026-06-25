@@ -1,21 +1,46 @@
 export const SITE = {
   title: 'dhqudcks0430 Notes',
   shortTitle: 'dhqudcks0430',
-  description: 'dhqudcks0430의 정적 개발자 포트폴리오이자 시스템 해킹 글 아카이브로, 사이버보안 학습·익스플로잇 연습·기술 메모에 집중합니다.',
+  description: 'dhqudcks0430의 개발일지 기록 블로그로, 보안 공부와 OpenCheck 제작 과정, 갭이어와 학습 기록을 차분하게 모읍니다.',
   author: 'dhqudcks0430',
   email: 'ddonggojin.gg@gmail.com',
   github: 'https://github.com/dhqudcks0430',
   linkedin: '',
-  tagline: '사이버보안 학습자, 시스템 해킹 글 아카이브, 다크 미니멀 기술 블로그.',
-  accent: '#73e2a7',
+  tagline: '보안 공부, OpenCheck 제작, 갭이어와 학습 과정을 기록하는 개발일지.',
+  accent: '#2f7f6f',
+  profile: {
+    name: 'dhqudcks0430',
+    role: '개발일지 기록',
+    description: '보안 공부와 작은 도구 제작 과정을 꾸준히 남깁니다.'
+  },
   nav: [
     { label: '홈', href: '/' },
-    { label: '소개', href: '/about' },
     { label: 'OpenCheck', href: '/opencheck' },
-    { label: '연락처', href: '/contact' },
     { label: '아카이브', href: '/archive' },
+    { label: '소개', href: '/about' },
+    { label: '연락처', href: '/contact' },
     { label: '태그', href: '/tags' },
     { label: '카테고리', href: '/categories' }
+  ],
+  sidebarTopics: [
+    {
+      label: '보안',
+      description: '시스템 해킹과 보안 도구 제작 기록',
+      items: [
+        { label: '시스템 해킹', href: '/dreamhack/system-hacking' },
+        { label: 'OpenCheck', href: '/opencheck' }
+      ]
+    },
+    {
+      label: '갭이어',
+      description: '잠깐 멈춰서 방향을 정리하는 기록',
+      items: [{ label: '갭이어 기록', href: '/gap-year' }]
+    },
+    {
+      label: '공부',
+      description: '매일 배우는 개념과 복습 노트',
+      items: [{ label: '공부 기록', href: '/study' }]
+    }
   ],
   tracks: [
     {
